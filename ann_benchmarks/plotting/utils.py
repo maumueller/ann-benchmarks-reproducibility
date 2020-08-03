@@ -64,6 +64,32 @@ def compute_metrics(true_nn_distances, res, metric_1, metric_2,
 
     return all_results
 
+def compute_metrics_all_runs(dataset, res, recompute=False):
+    true_nn_distances=list(dataset['distances'])
+    for i, (properties, run) in enumerate(res):
+        algo = properties['algo']
+        algo_name = properties['name']
+        # cache distances to avoid access to hdf5 file
+        # print('Load distances and times')
+        run_distances = numpy.array(run['distances'])
+        # print('... done')
+        if recompute and 'metrics' in run:
+            print('Recomputing metrics, clearing cache')
+            del run['metrics']
+        metrics_cache = get_or_create_metrics(run)
+
+        dataset = properties['dataset']
+
+        run_result = {
+            'algorithm': algo,
+            'parameters': algo_name,
+            'dataset': dataset,
+            'count': properties['count']
+        }
+        for name, metric in metrics.items():
+            v = metric["function"](true_nn_distances, run_distances, metrics_cache, properties)
+            run_result[name] = v
+        yield run_result
 
 def compute_all_metrics(true_nn_distances, run, properties, recompute=False):
     algo = properties["algo"]
