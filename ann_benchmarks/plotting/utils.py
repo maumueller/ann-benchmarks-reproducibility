@@ -84,7 +84,7 @@ def compute_metrics_all_runs(dataset, res, recompute=False):
             'algorithm': algo,
             'parameters': algo_name,
             'dataset': dataset,
-            'count': properties['count']
+            'count': properties['count'],
         }
         for name, metric in metrics.items():
             v = metric["function"](true_nn_distances, run_distances, metrics_cache, properties)

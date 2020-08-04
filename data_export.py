@@ -12,7 +12,7 @@ import pyarrow.parquet as pq
 from ann_benchmarks.datasets import get_dataset
 from ann_benchmarks.algorithms.definitions import get_definitions
 from ann_benchmarks.plotting.metrics import all_metrics as metrics
-from ann_benchmarks.plotting.utils  import get_plot_label, compute_metrics_all_runs, compute_metrics, create_linestyles, create_pointset, runs_to_dataframe
+from ann_benchmarks.plotting.utils  import get_plot_label, compute_metrics_all_runs, compute_metrics, create_linestyles, create_pointset
 from ann_benchmarks.results import store_results, load_all_results, get_unique_algorithms, get_algorithm_name
 
 datasets = [
@@ -65,12 +65,13 @@ if __name__ == "__main__":
     pqwriter = None
     for dataset_name in datasets:
         for count in [10, 100]:
-            print("Looking at dataset", dataset_name)
-            dataset = get_dataset(dataset_name)
-            unique_algorithms = get_unique_algorithms()
-            results = load_all_results(dataset_name, count, True, args.batch)
-            results = compute_metrics_all_runs(dataset, results, args.recompute)
-            dfs.append(pd.DataFrame(results))
+            for batch in [False, True]:
+                print("Looking at dataset", dataset_name)
+                dataset = get_dataset(dataset_name)
+                unique_algorithms = get_unique_algorithms()
+                results = load_all_results(dataset_name, count, True, batch)
+                results = compute_metrics_all_runs(dataset, results, args.recompute)
+                dfs.append(pd.DataFrame(results))
     if len(dfs) > 0:
         data = pd.concat(dfs)
         data.to_csv(args.output, index=False, compression='bz2')
