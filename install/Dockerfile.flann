@@ -1,7 +1,7 @@
 FROM ann-benchmarks
 
 RUN apt-get update && apt-get install -y cmake pkg-config liblz4-dev
-RUN git clone https://github.com/mariusmuja/flann
+RUN git clone https://github.com/mariusmuja/flann && cd flann && git checkout f3a17cd3f94a0e9dd8f6a55bce11536c50d4fb24
 RUN mkdir flann/build
 RUN cd flann/build && cmake ..
 RUN cd flann/build && make -j4
