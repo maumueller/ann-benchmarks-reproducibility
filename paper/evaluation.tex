@@ -1,0 +1,284 @@
+In this section we present a short evaluation of our findings from running
+benchmarks in the benchmarking framework. After a discussion of the evaluated
+implementations and datasets, we present four questions that we answer
+using the framework. Subsequently, we discuss the answers to
+these questions, present some observations regarding the build time of
+indexes and their ability to answer batched queries, and summarise our
+findings.
+
+\begin{table}[t]
+%    \setlength{\tabcolsep}{0.5em} % for the horizontal padding
+%    {\renewcommand{\arraystretch}{1.2}% for the vertical padding
+    \begin{tabular}{l l}
+        \textbf{Principle} & \textbf{Algorithms} \\ \hline \hline 
+        $k$-NN graph & \texttt{KGraph (KG)} \cite{kgraph}, \texttt{SWGraph (SWG)} \cite{swgraph,nmslib}, \texttt{HNSW} \cite{hnsw,nmslib}, \texttt{PyNNDescent (NND)} \cite{pynndescent}, \\
+                     & \texttt{PANNG} \cite{ngt,Iwasaki16}, \texttt{ONNG} \cite{ngt, Iwasaki18} \\
+        tree-based & \textit{FLANN} \cite{flann}, \textit{BallTree (BT)} \cite{nmslib}, \texttt{Annoy (A)} \cite{annoy}, \texttt{RPForest (RPF)} \cite{rpforest}, \texttt{MRPT} \cite{Hyvonen2016} \\
+        LSH & \texttt{FALCONN (FAL)} \cite{falconn}, \textit{MPLSH} \cite{mplsh,nmslib}%, \texttt{FAISS (FAI)} \cite{faiss} (+PQ codes) 
+        \\
+        
+    other %& \texttt{DOLPHINN (DOL)} \cite{dolphinn} (Projections + Hypercube)\\
+              & \texttt{Multi-Index Hashing (MIH)} \cite{mihalgo} (exact Hamming search), \\
+              & \texttt{FAISS-IVF (FAI)} \cite{faiss} (inverted file)
+    \end{tabular}
+%}
+    \caption{Overview of tested algorithms (abbr. in parentheses). Implementations in \textit{italics} have ``recall'' as quality measure
+     provided as an input parameter.} 
+    \label{tab:algorithms}
+    
+\end{table}
+
+\begin{table}[t]
+    %\setlength{\tabcolsep}{0.5em} % for the horizontal padding
+    %{\renewcommand{\arraystretch}{1.2}% for the vertical padding
+\begin{tabular}{l l l r l}
+    \textbf{Dataset} & \textbf{Data/Query Points} & \textbf{Dimensionality} & \textbf{LID} & \textbf{Metric} \\ \hline \hline
+    \textsf{SIFT} & 1\,000\,000 / 10\,000 & 128 & 21.9 & Euclidean \\
+    \textsf{GIST} & 1\,000\,000 / 10\,000 & 960 & 48.0 & Euclidean \\
+    \textsf{GLOVE} & 1\,183\,514 / 10\,000 & 100 & 18.0 & Angular/Cosine \\ 
+    \textsf{NYTimes} & 234\,791 / 10\,000 & 256 & 18.8 & Euclidean \\
+    \textsf{Rand-Euclidean} & 1\,000\,000 / 10\,000 & 128 & 6.8 & Angular/Cosine \\
+    \textsf{SIFT-Hamming} & 1\,000\,000 / 1\,000& 256 & 12.8 & Hamming \\
+    \textsf{Word2Bits} & 399\,000 / 1\,000 & 800 & 24.7 & Hamming \\
+\end{tabular}
+%}
+\caption{Datasets under consideration with their local intrinsic dimensionality (LID) computed by MLE \cite{Amsaleg15} from the 100-NN of the queries.}
+\label{tab:datasets}
+
+\end{table}
+%
+
+\medskip
+
+\noindent{\textbf{Experimental setup.}} All experiments were run in Docker
+containers on \emph{Amazon EC2} 
+\emph{c5.4xlarge} instances that are equipped with Intel Xeon Platinum 8124M CPU (16 cores available, 3.00 GHz, 25.0MB Cache)  and 
+32GB of RAM running Amazon Linux.
+Every experiment was repeated multiple times to verify that performance was reliable, and the results were compared with those obtained on a 4-core Intel Core i7-4790 clocked at 3.6 GHz with 32GB RAM. While the latter was a little faster, the relative order of algorithms remained stable. For each parameter setting and dataset, the algorithm was given 
+five hours to build the index and answer the queries.  
+
+\medskip
+
+\noindent{\textbf{Tested Algorithms.}} Table~\ref{tab:algorithms} summarizes the algorithms that are used in the evaluation; see the references provided for details. The framework has support for more implementations and many of these were included 
+in the experiments, but they
+turned out to be either non-competitive or too similar to other implementations.\footnote{For example, the framework contains three different 
+implementations of \texttt{HNSW}: the original one from NMSlib, a standalone variant inspired by that one, and an implementation in \texttt{FAISS} that is 
+again inspired by the implementation in NMSlib. The first two implementations perform almost indistinguishably, while the implementation provided in \texttt{FAISS} was a bit slower. For the sake of brevity, we also omit the two random projection forest-based methods \texttt{RPForest} and \texttt{MRPT} since they were always slower than \texttt{Annoy}. } The scripts that set up the framework automatically fetch the most current version found in each algorithm's repository.
+
+In general, the implementations under evaluation can be separated into three main algorithmic principles: graph-based, tree-based, and hashing-based algorithms. \emph{Graph-based algorithms} build a graph in which vertices are the points in the dataset and edges connect vertices that are true nearest neighbors of each other, forming the so-called $k$-NN graph. Given a query point, close neighbors are found by traversing the graph in a greedy, implementation-specific fashion \cite{kgraph,swgraph,hnsw,pynndescent,Iwasaki16}.
+\emph{Tree-based
+algorithms} use a collection of trees as their data structure. In these trees, each node splits the dataset into subsets that are then processed in the children of the node. If the dataset associated with a node is small enough, it is directly stored in the node which is then a leaf in the tree.  For example, \texttt{Annoy} \cite{annoy} and \texttt{RPForest} \cite{rpforest} choose in each node a random hyperplane to split the dataset. Given a query point, the collection of trees is traversed to obtain a set of
+candidate points from which the closest to the query are returned. \emph{Hashing-based algorithms} apply hash functions such as locality-sensitive hashing \cite{IndykM98} to map data points to hash values. At query time, the query point is hashed and keys colliding with it, or not too far from it using the
+multi-probe approach \cite{mplsh}, are retrieved. Among them, those closest to the query point are returned. Different implementations are mainly distinguished by their choice of underlying locality-sensitive hash function.
+
+\medskip
+
+\noindent{\textbf{Datasets.}} The datasets used in this evaluation are summarized in Table~\ref{tab:datasets}. More information on these datasets, as well as results for other datasets, can be found on the framework's website. The \textsf{NYTimes} dataset was generated by building tf-idf descriptors from the bag-of-words version, and embedding them into a lower dimensional space using the Johnson-Lindenstrauss Transform \cite{JohnsonL86}. The Hamming space version of \textsf{SIFT}
+was generated by applying Spherical Hashing \cite{HeoLHCY15}  using the implementation provided by the authors of \cite{HeoLHCY15}. The dataset \textsf{Word2Bits} comes from 
+the quantized word vector approach described in \cite{Lam18} using the top-400\,000 words in the English Wikipedia from 2017.
+
+The dataset \textsf{Rand-Euclidean} is generated as follows: Assume that we want to generate a dataset with $n$ data points, $n'$ query points, and are interested in finding the $k$ nearest neighbors for each query point. For an even dimension $d$, we generate $n - k\cdot n'$ data points of the form $(v, \mathbf{0})$, where $v$ is a random unit length vector of dimension $d/2$, and $\mathbf{0}$ is the vector containing $d/2$ $0$ entries. We call the first $d/2$ components the \emph{first part} and the following $d/2$ components the \emph{second part} of the vector.
+From these points, we randomly pick $n'$ points $(v_1,\ldots,v_{n'})$. For each point $v_i$, we replace its second part with a random vector of length $1/\sqrt{2}$. The resulting point is the query point $q_i$. For each $q_i$, we insert $k$ random points at varying distance increasing from $0.1$ to $0.5$ to $q_i$ into the original dataset. The idea behind such a dataset is that the vast majority of the dataset looks like a random dataset with little structure for the algorithm to exploit, while
+each query point has $k$ neighbors that are with high probability well separated from the rest of the data points. This means that the queries are easy to answer locally, but they should be difficult to answer if the algorithm wants to exploit a global structure.
+ 
+\medskip
+ 
+\noindent{\textbf{Parameters of Algorithms.}} Most algorithms do not allow the user to explicitly specify a quality target---in fact, only 
+three implementations from Table~\ref{tab:algorithms} provide ``recall'' as an input parameter. We used our framework to test many parameter settings at once. The detailed settings tested for each algorithm can be found on the framework's website. 
+
+\medskip 
+
+\noindent{\textbf{Status of \texttt{FALCONN}.}} While preparing this full version, we noticed that the performance of \texttt{FALCONN} has drastically decreased in recent versions. We communicated this to the authors of \cite{falconn}, who are, as of publication time, still working on a fix. For reference, we include the results from the conference version of this paper verbatim in Figure~\ref{plot:performance}, but we do not discuss results related to \texttt{FALCONN}.
+
+\subsection{Objectives of the Experiments}
+We used the benchmarking framework to find answers to the following questions:
+
+\noindent\textbf{(Q1) Performance.} Given a dataset, a quality measure and a number $k$ of nearest neighbors to return, how do algorithms compare to each other with respect 
+        to different performance measures, such as query time or index size?\\
+\noindent\textbf{(Q2) Robustness.} Given an algorithm $\mathcal{A}$, how is its performance 
+        and result quality influenced by the dataset and the number of returned neighbors?\\
+\noindent\textbf{(Q3) Approximation.} Given a dataset, a number $k$ of nearest neighbors to return, 
+        and an algorithm $\mathcal{A}$, how does its performance improve when the returned neighbors can be an approximation? Is the effect comparable for different algorithms? \\
+%\item[\textbf{(Q4)}] \textbf{Query Generation.} Usually, queries are generated by splitting a dataset at random. However, many datasets come with a pre-made set of queries. Is their a qualitative difference between splitting the dataset at random and answering these pre-made queries?
+\noindent\textbf{(Q4) Embeddings.} Equipped with a framework with many different datasets and distance metrics, we can try interesting combinations. How do algorithms targeting Euclidean space or Cosine similarity perform in, say, Hamming space? How does replacing the internals of an algorithm with Hamming space related techniques improve its performance?
+
+\begin{figure}[t!]
+\input{plot-performance}
+\end{figure}
+
+\subsection{Discussion}
+
+\noindent{\textbf{(Q1) Performance.}} Figure~\ref{plot:performance} shows the relationship between an algorithm's achieved recall and the number of queries it can answer per second (its QPS) on the two datasets \textsf{GLOVE} (Cosine similarity) and \textsf{SIFT} (Euclidean distance) for $10$- and $100$-nearest neighbor queries.
+
+For \textsf{GLOVE}, we observe that the graph-based algorithms clearly outperform the tree-based approaches. It is noteworthy that all implementations, except \texttt{FLANN}, 
+achieve close to perfect recall. Over all recall values, \texttt{HNSW} and \texttt{ONNG}
+are fastest. However, at high recall values they are closely matched by \texttt{KGraph}. Next comes \texttt{FAISS-IVF}, only losing to the 
+graph-based approaches at very high recall values. For 100 nearest neighbors, the picture is very similar. We note, however, that most
+graph-based indexes were not able to build indexes for nearly perfect
+recall values within the five-hour time limit.
+
+On \textsf{SIFT}, all tested algorithms %except \texttt{FAISS} 
+can achieve
+close to perfect recall. Again,
+the graph-based algorithms are fastest; they are followed by \texttt{Annoy} and
+\texttt{FAISS-IVF}. \texttt{FLANN} and \texttt{BallTree} are at the end.
+In particular, \texttt{FLANN} was not able to finish its auto-tuning for high
+recall values within the five-hour time limit.
+
+Very few of these algorithms can tune themselves to produce a particular recall
+value. In particular, almost all of the fastest algorithms on the \textsf{GLOVE} dataset
+expose many parameters, leaving the user to find the combination that works
+best. The
+\texttt{KGraph} algorithm, on the other hand, uses only a single parameter,
+which---even in its ``smallest'' choice---still gives high recall on \textsf{GLOVE} and \textsf{SIFT}.
+\texttt{FLANN} manages to tune itself for a particular recall value well. However, at 
+high recall values, the tuning does not complete within the time
+limit, especially with 100-NN.
+%
+
+\begin{figure}[t!]
+\input{plot-index-size}
+\end{figure}
+
+Figure~\ref{plot:index:size} relates an algorithm's performance to its index
+size. (Note that here down and to the right is better.) High recall can be achieved with small indexes by probing many points;
+however, this probing is expensive, and so the QPS drops dramatically.
+To reflect this performance cost, we scale the size of the index by the QPS it
+achieves for a particular run.
+This reveals that, on \textsf{SIFT}, most implementations perform similarly under 
+this metric. \texttt{HNSW} and \texttt{ONNG} are best (due to the QPS they achieve), but most of the other 
+algorithm achieve similar cost. In particular, \texttt{FAISS-IVF} and \texttt{FLANN} do well. \texttt{NND}, \texttt{Annoy}, and \texttt{BallTree} achieve their QPS at the cost of relatively large indexes, reflected in a rather large gap between them and their competition. On \textsf{GLOVE}, we see a much wider spread of index size performance. Here, \texttt{FAISS-IVF} and \texttt{HNSW} perform nearly indistinguishably. Next follow the other graph-based algorithms, with \texttt{FLANN} among
+them. Again, \texttt{Annoy} and \texttt{BallTree} perform worst in this measure.
+
+\noindent{\textbf{(Q2) Robustness.}} Figure~\ref{plot:random} plots recall against QPS on the dataset \textsf{Rand-Euclidean}. Recall from our earlier discussion of datasets that this dataset contains easy queries, but requires an algorithm to exploit the local structure instead of some global structure of the data structure, cf.~\textbf{Datasets}. We see very different behavior than before: there is a large difference between different graph-based approaches. While \texttt{ONNG}, \texttt{KGraph},
+\texttt{NND}
+can solve the task easily with high QPS, both \texttt{HNSW} and \texttt{SWG} fail in this task. This means that the ``small-world'' structure of these two methods \emph{hurts} performance on such a dataset. In particular, no tested parameter setting for \texttt{HNSW} achives recall beyond .86. \texttt{Annoy} performs best at exploiting the local structure of the dataset and is the fastest algorithm. The dataset is also easy for \texttt{FAISS-IVF}, which also has very good performance.    
+
+Let us turn our focus to how the algorithms perform on a wide variety of datasets. Figure~\ref{plot:robustness} plots recall against QPS for \texttt{Annoy}, \texttt{FAISS-IVF}, and \texttt{HNSW} over a range of datasets. Interestingly, implementations agree on the ``difficulty'' of a dataset most of the time, i.e., the relative order
+of performance is the same among the algorithms. Notable exceptions are \textsf{Rand-Euclidean}, which is very easy for \texttt{Annoy} and \texttt{FAISS-IVF}, but difficult for \texttt{HNSW} (see above), and \textsf{NYTimes}, where \texttt{FAISS-IVF} fails to achieve recall above .7 for the tested parameter settings. Although all algorithms take a performance hit for high recall values, \texttt{HNSW} is least affected. On the other hand, \texttt{HNSW} shows the biggest slowdown in answering 100-NN
+compared to 10-NN queries among the different algorithms.
+
+
+\begin{figure}[t!]
+\input{plot-random}
+\input{plot-robustness}
+\end{figure}
+
+\begin{figure}[t!]
+\input{plot-epsilon}
+\end{figure}
+\begin{figure}[t!]
+\input{plot-hamming}
+\end{figure}
+
+\noindent{\textbf{(Q3) Approximation.}} Figure~\ref{plot:approximation} relates achieved QPS to the (approximate) recall of an algorithm. The plots show 
+results on the \textsf{GIST} dataset with 100-NN for recall with no
+approximation and approximation factors of $1.01$ and $1.1$, respectively. Despite its high
+dimensionality, all considered algorithms achieve close to perfect recall (left). For an
+approximation factor of $1.01$, i.e., distances to true nearest neighbors are allowed to differ by $1\%$, all curves move to the right, as expected. Also, the relative difference between the performance of algorithms does not change. However, we see a clear difference between the candidate sets that are returned by algorithms at low recall. For example, the data point for \texttt{MRPT} around .5 recall on the left achieves roughly .6 recall
+as a $1.01$ approximation, which means that roughly 10 new candidates are considered true approximate nearest neighbors. On the other hand, \texttt{HSNW}, \texttt{FAISS-IVF}, and \texttt{Annoy} improve by around 25 candidates being counted as approximate nearest neighbors. We see that allowing a slack of $10\%$ in the distance renders the queries too simple: almost all algorithms achieve near-perfect recall for all of their parameter choices. Interestingly, \texttt{Annoy} becomes the
+second-fastest algorithm for $1.1$ approximation. This means that its candidates at very low recall values were a bit better than the ones obtained by its competitors. 
+
+
+
+%\noindent{\textbf{(Q4) Query Generation.}} The plot in Figure~\ref{plot:premade:queries} queries shows a comparison between the performance of algorithms on \textsf{SIFT} with the query set provided with the dataset, and a version where the queries are added to the dataset and the joined dataset is split randomly into 1M data points and 10\,000 queries. As the plot indicates, there is no significant difference between these two versions. 
+
+\noindent{\textbf{(Q4) Embeddings.}} Figure~\ref{plot:hamming} shows a comparison between selected algorithms on the binary version of \textsf{SIFT} and a version of the Wikipedia dataset generated by \textsf{Word2Bits}, which is an embedding of \texttt{word2vec} vectors~\cite{Mikolov13} into binary vectors. The
+performance plot for \texttt{Annoy} in the original Euclidean-space
+version of \textsf{SIFT} is also shown. 
+
+On \textsf{SIFT}, algorithms perform much faster 
+in the embedded Hamming space version compared to
+the original Euclidean-space version (see Figure~\ref{plot:performance}), which indicates that the queries are 
+easier to answer in the embedded space. (Note here that the dimensionality is actually twice as large.)  
+Multi-index
+hashing \cite{mihalgo}, an exact algorithm for Hamming space, shows good performance on \textsf{SIFT} with around 460 QPS.
+
+
+We created a Hamming space-aware version of \texttt{Annoy}, using
+\texttt{popcount} for distance computations, and sampling single bits 
+(as in Bitsampling LSH \cite{IndykM98}) instead of choosing hyperplanes. This version is two to three times faster on \textsf{SIFT} until high recall, where the Hamming space version and the Euclidean space version converge in running time.  
+On the 800-dimensional \textsf{Word2Bits} dataset the opposite is true and the original version of \texttt{Annoy} is faster than the dedicated Hamming space approach. This means that the original data-dependent node splitting in \texttt{Annoy} adapts better to the query structure than the node splitting by data-independent Bitsampling for this dataset. The dataset seems to be hard in general: \texttt{MIH} achieves only around 20 QPS on \textsf{Word2Bits}.
+We remark that setting the parameters for \texttt{MIH} correctly is crucial;
+even though the recall will always be 1, different parameter settings can give
+wildly different QPS values.
+
+The embedding into Hamming space does have some consistent benefits that we do
+not show here. Hamming space-aware algorithms should always have smaller index
+sizes, for example, due to the compactness of bit vectors.
+
+\subsection{Index build time remarks}
+\label{sec:build:time}
+
+Figure~\ref{fig:buildtime} compares different implementations with respect to the time it takes to build the index. We see a huge difference in the index building time among implementations, ranging from \texttt{FAISS-IVF} (around 2 seconds to build the index) to \texttt{HNSW} (almost 5 hours). In general, building the nearest neighbor graph and building a tree data structure takes considerably longer than the inverted file approach taken by \texttt{FAISS-IVF}. Shorter build times make it much quicker to search for the best parameter choices for a dataset. Although all indexes achieve recall of at least 0.9, we did not normalize by the queries per second as in Figure~\ref{plot:index:size}. For example, \texttt{HNSW} also achieves its highest QPS with these indexes, but \texttt{FAISS-IVF} needs a larger index to achieve the performance from Figure~\ref{plot:performance} (which takes around 13 seconds to build).
+As an aside, \texttt{FAISS}'s implementation of \texttt{HNSW} is much faster than the original here, building an index that achieved recall .9 in only 1\,700 seconds.
+
+\input{result_tables/build_bar}
+
+
+\input{plot-qps-build-sqrt}
+
+Another perspective on build time and query time is given by Figure~\ref{plot:qps-build}. There, we plot queries per second \emph{times} the time it took to build the index, which is the build time divided by the average query time. This gives an amortization point: \emph{How many queries must be performed to make it worth building the index structure?}
+The plot shows that the amortization point decreases for all methods as the recall increases. The differences in building time discussed in Figure~\ref{fig:buildtime} translate to very different curves.
+For example, \texttt{FAISS-IVF} amortizes the time spent building the index after around 100\,000 queries for recall 0.9, or 1\,000\,000 queries at recall 0.75. By comparison, \texttt{HNSW} needs around a factor of 100 more queries to amortize for its longer build times: around 10 million at recall 0.9 and 100 million at recall 0.75.
+
+We remark that it makes little sense to optimize for this cost measure; it is merely useful when deciding whether or not a particular use case justifies building a certain index. 
+
+\subsection{Batched Queries}
+
+We turn our focus to batched queries. In this setting, each algorithm is given the whole set of query points at once and has to return closest neighbors for each point. This allows for several optimizations: in a GPU setting, for example, copying query points to, and results from, the GPU's memory is expensive, and being able to copy everything at once drastically reduces this overhead.
+
+The following experiments have been carried out on an Intel Xeon CPU E5-1650 v3 @ 3.50GHz with 6 physical cores, 15MB L3 Cache, 64 GB RAM, and equipped with an NVIDIA Titan XP GPU. 
+
+\begin{figure}
+\input{plot-batch}
+\end{figure}
+
+Figure~\ref{plot:batch} reports on our results with regard to algorithms in batch mode. \texttt{FAISS}' inverted file index on the GPU is by far the fastest index, answering around 655\,000 queries per second for .7 recall, and 61\,000 queries per second for recall .99. It is around 20 to 30 times faster than the respective data structure running on the CPU. Comparing \texttt{HNSW}'s performance with batched queries against non-batched queries shows a speedup by a factor of roughly 3 at .5 recall, and a factor of nearly
+5 at recall .99 in favor of batched queries.
+It is particularly interesting to see that even the simplest GPU-driven approach, \texttt{FAISS}' brute-force variant, can handle nearly 25,000 queries per second.
+
+\subsection{Summary}
+
+\noindent\textbf{Which method to choose?} From the evaluation, we see that graph-based algorithms provide by far the highest number of queries per second on most of the datasets. \texttt{HNSW} and \texttt{ONNG} are often the fastest algorithms, with \texttt{ONNG} being more robust if there is no global structure in the dataset, according to the experiments presented here. The downside of graph-based approaches is the high preprocessing time needed to build their data structures. This could mean that they might not be the preferred choice if the dataset changes regularly. When it comes to small and quick-to-build index data structures, \texttt{FAISS}' inverted file index provides a suitable choice that still gives good performance in answering queries, as discussed in Section~\ref{sec:build:time}.
+
+\medskip
+
+\noindent\textbf{How well do these results generalize?} In our experiments, we observed that, for the standard datasets under consideration, algorithms usually agree on 
+\begin{itemize}
+\item [(i)] the order in how well they perform on datasets, i.e., if algorithm \texttt{A} answers queries on dataset \textsf{X} faster than on dataset \textsf{Y}, then so will algorithm \texttt{B}; and 
+\item [(ii)] their relative order to each other, i.e., if algorithm \texttt{A} is faster than algorithm \texttt{B} on dataset \textsf{X}, this will most likely be the order for dataset \textsf{Y}.
+\end{itemize}
+There exist exceptions from this rule, e.g., for the dataset \textsf{Rand-Euclidean} described above.
+
+\medskip
+
+\noindent\textbf{How robust are parameter choices?} With very few exceptions (see Table~\ref{tab:algorithms}), users often have to set many parameters themselves. Our framework allows them to choose the best parameter choice by exploring the interactive plots that contain the parameter choices that achieve certain quality guarantees. 
+
+In general, the \emph{build parameters} can be used to estimate the size of the index\footnote{As an
+example, the developers of \texttt{FAISS} provide a detailed description of the space usage of their indexes at \url{https://github.com/facebookresearch/faiss/wiki/Faiss-indexes}.},
+while the \emph{query parameters} suggest the amount of effort that is put into searching the index. 
+
+We will concentrate for a moment on Figure~\ref{plot:parameters}. This figure presents a scatter plot of selected algorithms for \textsf{GLOVE} on 10-NN, cf. the Pareto curve in Figure~\ref{plot:performance} (in the top left). Each algorithm has a very distinctive parameter space plot. 
+
+For \texttt{HNSW}, almost all data points lie on the Pareto curve. This means that the different build parameters blend seamlessly into each other.
+For \texttt{Annoy}, we see that data points are grouped into clusters of three points each, which represent exactly the three different index
+choices that are built by the algorithm.
+For low recall, there is a big performance penalty for choosing a too large index; at high recall, the different build parameters blend almost into each other.
+For \texttt{SW-Graph}, we see two groups of data points, representing two different index choices.
+We see that with the index choice to the left, only very low recall is achieved on the dataset.
+Extrapolating from the curve, choosing query parameters that would explore a large part of the index will probably lead to low QPS. No clear picture is visible for \texttt{FAISS-IVF} from the plot. This is chiefly because we test many different build parameters -- recall that the index building time is very low. Each build parameter has its very own curve with respect to the different query parameters. 
+
+As a rule of thumb, when aiming for high recall values, a larger index performs
+better than a smaller index and is more robust to the choice of query parameters.
+
+\begin{figure}
+    \input{plot-parameters}
+\end{figure}
+
+\medskip
+\noindent\textbf{How do these results generalize to lower-dimensional datasets?} While our focus has been on high-dimensional datasets, one might reasonably wonder to what extent the observations made above are true for lower-dimensional datasets. To this end, we embedded the \textsf{NYTimes} dataset so that each vector is in $\mathbb{R}^6$. The relative performance of the implementations discussed earlier is nearly unaffected by this change, i.e., graph-based approaches still provide a better QPS/recall tradeoff than other approaches. However, the exact KD-tree
+implementation provided with Python's \texttt{sklearn} --
+which performs worse than a linear scan on all of the other datasets in our evaluation --
+becomes very competitive, achieving around 7000 QPS -- lower than \texttt{HNSW} (~40000 QPS with recall .9984) and \texttt{FAI-IVF} (~10000 QPS at recall .9983), but faster, for example, than \texttt{PyNNDescent}, which achieves around 2000 QPS at recall .999.
+This suggests that exact algorithms are worth considering when working with lower-dimensional datasets.

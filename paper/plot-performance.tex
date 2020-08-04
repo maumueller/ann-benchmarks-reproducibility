@@ -1,0 +1,131 @@
+    \begin{tikzpicture}[every mark/.append style={mark size=1.5pt}]
+%\selectcolormodel{gray}
+        \begin{groupplot}[group style = {group size = 2 by 2, group name = hamming, horizontal sep = 0.3cm, vertical sep=1.5em}, grid = both, grid style={line width=.1pt, draw=gray!30},
+    major grid style={line width=.2pt,draw=gray!50},height=8cm, width=.55\textwidth,
+              ymin = 10, ymax = 100000, xtick = {0, 0.25, 0.5, 0.75, 1}, max space between ticks=20]
+
+        \nextgroupplot[
+            %ylabel={QPS (1/s)},
+            %ylabel style ={overlay},
+            ymode = log,
+			xticklabels = {,,},
+            yticklabel style={/pgf/number format/fixed,
+                              /pgf/number format/precision=3},
+            ]
+        \addplot table {result_tables/glove-100-angular_10_annoy_k-nn_qps};
+        %\addlegendentry{annoy};
+        \addplot table {result_tables/glove-100-angular_10_BallTree(nmslib)_k-nn_qps};
+        %\addlegendentry{BallTree};
+        \addplot table {result_tables/glove-100-angular_10_faiss-ivf_k-nn_qps};
+        %\addlegendentry{faiss-ivf};
+        \addplot table {result_tables/glove-100-angular_10_flann_k-nn_qps};
+        %\addlegendentry{flann};
+        \addplot table {result_tables/glove-100-angular_10_hnsw(nmslib)_k-nn_qps};
+        %\addlegendentry{hnsw};
+        \addplot table {result_tables/glove-100-angular_10_kgraph_k-nn_qps};
+        %\addlegendentry{kgraph}
+        \addplot table {result_tables/glove-100-angular_10_NGT-onng_k-nn_qps};
+        %\addlegendentry{ NGT-onng };
+        \addplot table {result_tables/glove-100-angular_10_pynndescent_k-nn_qps};
+        %\addlegendentry{pynndescent}
+        \addplot table {result_tables/glove-100-angular_10_SW-graph(nmslib)_k-nn_qps};
+        %\addlegendentry{SW-graph};
+        \nextgroupplot[
+            %ylabel={QPS (1/s)},
+            ymode = log,
+			%width=\textwidth,
+	        %height=5cm,
+            yticklabel style={/pgf/number format/fixed,
+                              /pgf/number format/precision=3},
+            yticklabels = {,,},
+			xticklabels = {,,},
+            legend style = { at = { (.75, 1.2 ) }},
+            legend columns = 5
+            ]
+        \addplot table {result_tables/glove-100-angular_100_annoy_k-nn_qps};
+        \addlegendentry{A};
+        \addplot table {result_tables/glove-100-angular_100_BallTree(nmslib)_k-nn_qps};
+        \addlegendentry{BT};
+        \addplot table {result_tables/glove-100-angular_100_faiss-ivf_k-nn_qps};
+        \addlegendentry{FAISS-IVF};
+        \addplot table {result_tables/glove-100-angular_100_flann_k-nn_qps};
+        \addlegendentry{FLANN};
+        \addplot table {result_tables/glove-100-angular_100_hnsw(nmslib)_k-nn_qps};
+        \addlegendentry{HNSW};
+        \addplot table {result_tables/glove-100-angular_100_kgraph_k-nn_qps};
+        \addlegendentry{KG}
+        \addplot table {result_tables/glove-100-angular_100_NGT-onng_k-nn_qps};
+        \addlegendentry{ONNG};
+        \addplot table {result_tables/glove-100-angular_100_pynndescent_k-nn_qps};
+        \addlegendentry{NND}
+        \addplot table {result_tables/glove-100-angular_100_SW-graph(nmslib)_k-nn_qps};
+        \addlegendentry{SWG};
+            
+        \nextgroupplot[
+            xlabel={Recall},
+            ylabel={QPS (1/s)},
+            ylabel style = {overlay,
+                at = {(0.0, 1.2)},
+                anchor = center},
+            ymode = log,
+			%width=\textwidth,
+	        %height=5cm,
+            yticklabel style={/pgf/number format/fixed,
+                              /pgf/number format/precision=3},
+            %legend pos = {outer north east},
+            ]
+        \addplot table {result_tables/sift-128-euclidean_10_annoy_k-nn_qps};
+        %\addlegendentry{annoy};
+        \addplot table {result_tables/sift-128-euclidean_10_BallTree(nmslib)_k-nn_qps};
+        %\addlegendentry{BallTree};
+        \addplot table {result_tables/sift-128-euclidean_10_faiss-ivf_k-nn_qps};
+        %\addlegendentry{faiss-ivf};
+        \addplot table {result_tables/sift-128-euclidean_10_flann_k-nn_qps};
+        %\addlegendentry{flann};
+        \addplot table {result_tables/sift-128-euclidean_10_hnsw(nmslib)_k-nn_qps};
+        %\addlegendentry{hnsw};
+        \addplot table {result_tables/sift-128-euclidean_10_kgraph_k-nn_qps};
+        %\addlegendentry{kgraph}
+        \addplot table {result_tables/sift-128-euclidean_10_NGT-onng_k-nn_qps};
+        %\addlegendentry{ NGT-onng };
+        \addplot table {result_tables/sift-128-euclidean_10_pynndescent_k-nn_qps};
+        %\addlegendentry{pynndescent}
+        \addplot table {result_tables/sift-128-euclidean_10_SW-graph(nmslib)_k-nn_qps};
+        %\addlegendentry{SW-graph};
+            
+        \nextgroupplot[
+            xlabel={Recall},
+            %ylabel={QPS (1/s)},
+            ymode = log,
+			%width=\textwidth,
+	        %height=5cm,
+            yticklabel style={/pgf/number format/fixed,
+                              /pgf/number format/precision=3},
+            yticklabels = {,,},
+            %legend pos = {outer north east},
+            %legend style = { at = { (.93, 1.25 ) } },
+            %legend columns = 9
+            ]
+        \addplot table {result_tables/sift-128-euclidean_100_annoy_k-nn_qps};
+        %\addlegendentry{annoy};
+        \addplot table {result_tables/sift-128-euclidean_100_BallTree(nmslib)_k-nn_qps};
+        %\addlegendentry{BallTree};
+        \addplot table {result_tables/sift-128-euclidean_100_faiss-ivf_k-nn_qps};
+        %\addlegendentry{faiss-ivf};
+        \addplot table {result_tables/sift-128-euclidean_100_flann_k-nn_qps};
+        %\addlegendentry{flann};
+        \addplot table {result_tables/sift-128-euclidean_100_hnsw(nmslib)_k-nn_qps};
+        %\addlegendentry{hnsw};
+        \addplot table {result_tables/sift-128-euclidean_100_kgraph_k-nn_qps};
+        %\addlegendentry{kgraph}
+        \addplot table {result_tables/sift-128-euclidean_100_NGT-onng_k-nn_qps};
+        %\addlegendentry{ NGT-onng };
+        \addplot table {result_tables/sift-128-euclidean_100_pynndescent_k-nn_qps};
+        %\addlegendentry{pynndescent}
+        \addplot table {result_tables/sift-128-euclidean_100_SW-graph(nmslib)_k-nn_qps};
+        %\addlegendentry{SW-graph};
+    \end{groupplot}
+\end{tikzpicture}
+    \caption{Recall-QPS (1/s) tradeoff - up and to the right is better.
+    Top: \textsf{GLOVE}, bottom: \textsf{SIFT}; left: $10$-NN, right: $100$-NN.}
+    \label{plot:performance}

@@ -1,0 +1,83 @@
+We assume that we want to find nearest neighbors in a space $X$ with a distance measure $\text{dist}\colon X\times X \rightarrow \mathbb{R}$, for example the $d$-dimensional 
+Euclidean space $\mathbb{R}^d$ under Euclidean distance ($l_2$ norm), or %$d$-dimensional 
+Hamming space $\{0,1\}^d$ under Hamming distance.
+
+An algorithm $\mathcal{A}$ for nearest neighbor search builds a data structure DS$_\mathcal{A}$ for a data set $S \subset X$ of $n$ points. In a preprocessing phase, it creates DS$_\mathcal{A}$ 
+to support the following type of queries: For a query point $q \in X$ and an integer $k$, return a \emph{result tuple} $\pi = (p_1, \ldots, p_{k'})$ of $k' \leq k$ distinct points from $S$ 
+that are ``close'' to the query $q$. Nearest neighbor search algorithms generate $\pi$ by refining a set $C \subseteq S$ of 
+candidate points with respect to $q$ by choosing the $k$ closest points among those using distance computations. The size of $C$ (and thus the number of distance computations) is denoted by $N$. We let $\pi^\ast = (p^\ast_1, \ldots, p^\ast_k)$ denote the tuple containing the true $k$ nearest neighbors for $q$ in $S$ (where ties are broken arbitrarily). We 
+assume in the following that all tuples are sorted according to their distance to $q$.  
+
+\subsection{Quality Measures}
+
+We use different notions of ``recall'' as a measure of the quality of the result returned by the algorithm. 
+Intuitively, recall is the ratio of the number of points in the result tuple that are true nearest neighbors to the number $k$ of true nearest neighbors. However, this intuitive 
+definition is fragile when distances are not distinct or when we try to add a notion of approximation to it. To avoid these issues, we use 
+the following distance-based definitions of recall and $(1+\varepsilon)$-approximative recall, that take the distance 
+of the $k$-th  true nearest neighbor as threshold distance. 
+%
+\begin{align*}
+\text{recall}(q, \pi, p^\ast_k) &= \frac{|\{p \text{ contained in $\pi$} \mid \text{dist}(p,q) \leq \text{dist}(p^\ast_k,q)\}|}{k}\\
+\text{recall}_\varepsilon(q, \pi, p^\ast_k) &= \frac{|\{p \text{ contained in $\pi$} \mid \text{dist}(p,q) \leq (1 + \varepsilon) \text{dist}(p^\ast_k,q)\}|}{k}, \quad\text{for $\varepsilon > 0$.}
+\end{align*}
+(If all distances are distinct, $\text{recall}(q, \pi, p^\ast_k)$ matches the intuitive notion of recall.)
+
+We note that (approximate) recall in high dimensions is sometimes criticised; see, for example, \cite[Section 2.1]{nmslib}. We investigate the impact of approximation as part of the evaluation in Section~\ref{sec:evaluation}, and plan to include other quality measures such as position-related measures \cite{ZezulaSAR98} in future work. 
+
+\begin{comment}
+Given a query point $q \in X$ and the tuple $\pi^\ast$ of true nearest neighbors, we let $d_1 < \dots < d_t$ denote the $t \leq k$ distinct distances of the points in $\pi^\ast$ to 
+$q$. Let $f_i$ be the number of points in $\pi$ that have distance $d_i$ to $q$, and let $f'_t$ be the number of points in $\pi^\ast$ at distance $d_t$.  We define: 
+\begin{align*}
+    \text{recall}(\pi, \pi^\ast) &= \frac{\sum_{i = 1}^{t - 1} f_i + \min\{f_t, f'_t\}}{k}.
+\end{align*}
+Note the minimum for the last class of distances. Otherwise, the recall of a result with two points at distance $2$, where the true nearest neighbors have distance $1$ and $2$ would yield a recall of $1$.
+
+For an approximation factor $\varepsilon > 0$ we define an approximative version of recall as follows: We say that a point $p$ is \emph{$\varepsilon$-close} to $d_i$ if dist$(p, q) \leq (1+\varepsilon)d_i$ but dist$(p,q) > (1+\varepsilon)d_{i - 1}$. (For sake of the definition, we set $d_0 = -1$.) Now, we let $f^\varepsilon_i$ be the number of points in $\pi$ that 
+are $\varepsilon$-close to $d_i$, for each $i \in \{1,\ldots, t\}$.  Furthermore, let $f'_t$ be defined as above. Then we define  
+
+\begin{align*}
+\text{recall}_\varepsilon(\pi, \pi^\ast) &= \frac{\sum_{i = 1}^{t - 1} f^\varepsilon_i + \min\{f^\varepsilon_t, f'_t\}}{k}.
+\end{align*}
+
+To estimate the quality of the result without having an approximation factor $\varepsilon$, \cite{ZezulaSAR98} propose to look at the \emph{relative error}
+of $\pi$ and $\pi^\ast$.
+\begin{align*}
+\text{rel-error}(\pi, \pi^\ast) &=
+\begin{cases}
+\frac{\sum_{i = 1}^{k}\text{dist}(q, p^\ast_i)}{\sum_{i = 1}^{k}\text{dist}(q, p_i)}, & \text{if $k = k'$, and} \\
+0, & \text{otherwise}.
+\end{cases}
+\end{align*}
+%
+Here, we set the relative distance of a result having less than $k$ elements to $0$, which corresponds to filling up the left-out spots by points at distance $\infty$ to the query.
+
+We note that recall and relative error are up to criticism in high dimensions, see, for example the discussion in~\cite[Section 2.1]{nmslib}. In our experiments, we did not observe that approximative recall or relative error yielded unexpected results. Nevertheless, we plan to include other quality measures such as position-related measures \cite{ZezulaSAR98} in future work. 
+\end{comment}
+%\matodo{Should we keep the comment about criticism of metrics? -Alec}
+
+\begin{table}[t]
+%    \setlength{\tabcolsep}{0.5em} % for the horizontal padding
+%    {\renewcommand{\arraystretch}{1.2}% for the vertical padding
+    \begin{tabular}{l l}
+        \textbf{Name of Measure} & \textbf{Computation of Measure} \\ \hline \hline
+        Index size of DS & Size of DS after preprocessing finished (in kB) \\
+        Index build time DS & Time it took to build DS  (in seconds) \\ \hline
+        Number of distance computations &  $N$ \\
+        Time of a query & Time it took to run the query and generate result tuple $\pi$ \\[1em]
+\end{tabular}%}
+    \caption{Performance measures used in the framework.}
+    \label{tab:performance:measures}
+\end{table}
+%
+\subsection{Performance Measures}
+
+With regard to the performance, we use the performance measures defined
+in Table~\ref{tab:performance:measures}, which are divided 
+into measures of the performance of the preprocessing step,
+i.e., generation of the data structure, and measures of the performance 
+of the query algorithm. With respect to the query performance, different
+communities are interested in different cost values. Some rely on 
+actual timings of query times, where others rely on the number of distance
+computations. The framework can take both of
+these measures into account. However, none of the currently included 
+algorithms report the number of distance computations.
