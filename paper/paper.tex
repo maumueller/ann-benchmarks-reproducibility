@@ -1,0 +1,156 @@
+\documentclass[a4paper,english]{lipics-v2018}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily\small, backgroundcolor=\color{white}}
+\usepackage{srcltx}
+\usepackage[ttscale=.875]{libertine}
+%\usepackage[colorlinks=true]{hyperref}
+\usepackage{wrapfig}
+
+\newcommand\YAMLcolonstyle{\color{red}\mdseries}
+\newcommand\YAMLkeystyle{\color{black}\bfseries}
+\newcommand\YAMLvaluestyle{\color{blue}\mdseries}
+
+\hideLIPIcs
+
+\makeatletter
+
+\newcommand\language@yaml{yaml}
+
+\expandafter\expandafter\expandafter\lstdefinelanguage
+\expandafter{\language@yaml}
+{
+  keywords={true,false,null,y,n},
+  keywordstyle=\color{darkgray}\bfseries,
+  basicstyle=\YAMLkeystyle,                                 % assuming a key comes first
+  sensitive=false,
+  comment=[l]{\#},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{purple}\ttfamily,
+  stringstyle=\YAMLvaluestyle\ttfamily,
+  moredelim=[l][\color{orange}]{\&},
+  moredelim=[l][\color{magenta}]{*},
+  moredelim=**[il][\YAMLcolonstyle{:}\YAMLvaluestyle]{:},   % switch to value style at :
+  morestring=[b]',
+  morestring=[b]",
+  literate =    {---}{{\ProcessThreeDashes}}3
+                {>}{{\textcolor{red}\textgreater}}1     
+                {|}{{\textcolor{red}\textbar}}1 
+                {\ -\ }{{\mdseries\ -\ }}3,
+}
+
+% switch to key style at EOL
+\lst@AddToHook{EveryLine}{\ifx\lst@language\language@yaml\YAMLkeystyle\fi}
+\makeatother
+
+\newcommand\ProcessThreeDashes{\llap{\color{cyan}\mdseries-{-}-}}
+
+\let\accentvec\vec
+\let\spvec\vec
+\let\vec\accentvec
+
+%\addtolength{\textfloatsep}{-3mm}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{verbatim}
+\usepackage[textsize=tiny]{todonotes}
+%\usepackage[notref,notcite]{showkeys}
+%\usepackage[subtle]{savetrees}
+
+
+
+%\sp\vspace{-1em}orem{algorithm}{Algorithm}{\bfseries}{\rmfamily}
+
+\newcommand{\matodo}[1]{\todo[color=green!30]{#1}}
+\newcommand{\alectodo}[1]{\todo[color=red!30]{#1}}
+\newcommand{\eriktodo}[1]{\todo[color=blue!30]{#1}}
+
+% Mandatory. First: Use abbreviated first/middle names. Second (only in severe cases): Use first author plus 'et. al.'
+\authorrunning{M. Aumüller, E. Bernhardsson, A. Faithfull}
+
+% Mandatory, please use full first names. LIPIcs license is "CC-BY";  http://creativecommons.org/licenses/by/3.0/
+\Copyright{ Martin Aumüller, Erik Bernhardsson, Alexander Faithfull} 
+
+% Mandatory: Please choose ACM 1998 classifications from http://www.acm.org/about/class/ccs98-html . E.g., cite as "F.1.1 Models of Computation". 
+\subjclass{H.3.3 Information Search and Retrieval}
+
+% Mandatory: Please provide 1-5 keywords
+\keywords{benchmarking, nearest neighbor search, evaluation}
+
+\usepackage{pgfplots}
+\usepgfplotslibrary{groupplots,colorbrewer}
+\pgfplotsset{
+  legend style = {font=\ttfamily}
+}
+\pgfplotsset{
+% initialize Set1-5:
+cycle list/Set1-5,
+% combine it with ’mark list*’:
+cycle multiindex* list={
+mark list*\nextlist
+Set1-5\nextlist
+},
+}
+
+\usepackage{url}
+
+\title{ANN-Benchmarks: A Benchmarking Tool for Approximate Nearest Neighbor Algorithms%
+\footnote{The research of the first and third authors has received funding from the European Research Council under the European Union's 7th Framework Programme (FP7/2007-2013) / ERC grant agreement no. 614331.
+A conference version of this work was published at SISAP'17 and is available at \url{http://dx.doi.org/10.1007/978-3-319-68474-1_3}.}
+}
+\titlerunning{ANN-Benchmarks: A Benchmarking Tool for ANN Algorithms}
+
+\author{Martin Aum\"{u}ller}{IT University of Copenhagen, Denmark}{maau@itu.dk}{}{}
+\author{Erik Bernhardsson}{Better, Inc.}{mail@erikbern.com}{}{}
+\author{Alexander Faithfull}{IT University of Copenhagen, Denmark}{alef@itu.dk}{}{}
+\begin{document}
+\maketitle
+\begin{abstract}
+    This paper describes \textsf{ANN-Benchmarks}, a tool for evaluating
+    the performance of in-memory approximate nearest neighbor algorithms. It
+    provides
+    a standard interface for measuring the performance and quality achieved by nearest neighbor
+    algorithms on different standard data sets. It
+    supports several different ways of integrating $k$-NN algorithms, and
+    its configuration system automatically tests a range of parameter settings
+    for each algorithm.
+    Algorithms are compared with respect to many different (approximate)
+    quality
+    measures, and adding more is easy and fast;
+    the included plotting front-ends can visualise these as images, \LaTeX\
+    plots, and websites with interactive plots.
+    \textsf{ANN-Benchmarks} aims to provide a constantly updated overview of
+    the current state of the art of $k$-NN algorithms.
+    In the short term, this overview allows users to 
+  	choose the correct $k$-NN algorithm and parameters for their similarity
+  	search task;
+	  in the longer term, algorithm designers will be able to use this overview
+	  to test and refine automatic parameter tuning.
+	The paper gives an overview of
+    the system, evaluates the results of the benchmark,
+    and points out directions for future work. Interestingly, very different approaches
+	to $k$-NN search yield comparable quality-performance trade-offs. 
+    The system is available at \url{http://ann-benchmarks.com}.
+\end{abstract}
+
+
+%\setlength{\abovecaptionskip}{0pt plus 2pt}
+
+\section{Introduction}\label{sec:introduction}
+\input{intro}
+\section{Problem Definition and Quality Measures}\label{sec:problem:desc}
+\input{problem}
+\section{System Design}\label{sec:system:design}
+\input{system}
+\section{Evaluation}\label{sec:evaluation}
+\input{evaluation}
+\section{Conclusion \& Further Work}\label{sec:conclusion}
+\input{conclusion}
+\bibliographystyle{splncs03}
+\bibliography{lit}
+
+
+\end{document}

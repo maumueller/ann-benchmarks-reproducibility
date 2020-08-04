@@ -1,0 +1,113 @@
+Nearest neighbor search is one of the most fundamental tools in many areas of computer science, such as image recognition, machine learning, and computational linguistics.   For example, 
+one can use nearest neighbor search on labelled image datasets such as MNIST \cite{Lecun98} to recognize handwritten digits, or one can find words that are semantically similar by applying the \textsf{word2vec} embedding \cite{Mikolov13} and finding nearest neighbors. The latter can, for example, be used to tag articles on a news website and recommend new articles to readers that have shown an interest in a certain topic. Other applications of nearest neighbor search include outlier detection \cite{KirnerSZ17}, music classification \cite{PalmasonOASK17}, and recommender systems \cite{Herlocker99}.
+In some cases, a generic
+nearest neighbor search under a suitable distance or measure of similarity offers surprising quality improvements \cite{BoytsovNMN16}.
+
+In many applications, the data points are described by high-dimensional vectors, with on the order of 100 to 1000 dimensions.
+A phenomenon called the \emph{curse of dimensionality},
+a consequence of several popular algorithmic hardness conjectures (see \cite{AlmanW15,Williams05}),
+tells us that, to obtain the true nearest neighbors, we have to use either linear time (in the 
+size of the dataset) or time/space that is exponential in the dimensionality of the dataset. 
+In the case of \emph{massive} high-dimensional datasets, this rules out \emph{efficient} and \emph{exact} nearest neighbor search algorithms \emph{in general}.  
+
+To obtain efficient algorithms, research has focused on allowing the returned neighbors to be an \emph{approximation} of the true nearest neighbors. Usually, this means that the answer to finding the nearest neighbors to a query point is judged by how 
+\emph{close} (in some technical sense) the result set is to the set of true nearest neighbors. 
+
+There exist many different algorithmic techniques for finding approximate nearest neighbors.
+Classical algorithms such as $kd$-trees \cite{kdtree} or M-trees \cite{CiacciaPZ97} can simulate this by terminating the search early, for example shown by 
+Zezula et al. \cite{ZezulaSAR98} for M-trees. Other techniques \cite{hnsw,swgraph} build a graph from the dataset, where each vertex is associated with a data point, and a vertex is adjacent to its true nearest neighbors in the data set. Others involve projecting data points into a lower-dimensional space using hashing. 
+A lot of research has been conducted with respect to locality-sensitive hashing (LSH) \cite{IndykM98}, but there exist many other 
+techniques that rely on hashing for finding nearest neighbors; see \cite{AndoniI16,wang} for a survey on the topic. 
+We note that, in the realm of LSH-based techniques, algorithms guarantee sublinear query time, but solve a problem that is only distantly related to finding the $k$ nearest neighbors of a query point.
+In practice, this could mean that the algorithm runs \emph{more} slowly than a linear scan through the data, and counter-measures have to be taken to avoid this behavior \cite{AhleAP17,Pham17}. 
+
+Given the difficulty of the problem of finding nearest neighbors in
+high-dimensional spaces and the wide range of different solutions at hand, it
+is natural to ask how these algorithms perform in empirical settings. In particular,
+while the general problem of finding nearest neighbors in high-dimensional datasets is difficult,
+high-dimensional datasets are often \emph{not truly} high dimensional. That means that they are 
+embedded into a high-dimensional space, but can be summarized in a space with much lower dimensionality. Measures
+such as the intrinsic dimensionality \cite{Levina05} or the more recent notion of local intrinsic dimensionality \cite{Houle13} try to capture this observation. Different techniques could have distinct ways to exploit the intrinsic lower dimensionality of many datasets. 
+
+Fortunately, many nearest neighbor search techniques have good implementations: see,
+e.g., \cite{flann,annoy,rpforest} for tree-based, \cite{nmslib,kgraph} for
+graph-based, and \cite{falconn} for LSH-based, solutions.
+This means that a new (variant of an existing) algorithm can show its worth by
+comparing itself to the many previous algorithms on a collection of standard
+benchmark datasets with respect to a collection of quality measures.
+What often happens, however, is that the evaluation of a new implementation is
+based on a small set of competing algorithms and a small number of selected
+datasets. This approach is bad for everyone: the authors of a new
+implementation do not get a representative view of how their work compares to
+others (and they, in turn, do not make it easy to use \emph{their} work in such
+comparisons); reviewers and readers might not trust the reproducibility of
+these results, or the impartiality of the dataset, parameter and implementation
+choices; and potential users learn nothing useful about how an implementation
+actually compares with the rest of the field in practical conditions.
+
+This paper proposes a way of standardizing benchmarking for nearest neighbor
+search algorithms, taking into account their properties and quality measures.
+Our benchmarking framework provides a unified approach to experimentation and
+comparison with existing work. The framework has already been used for
+experimental comparison in other papers \cite{hnsw} (to refer to parameter
+choice of algorithms) and algorithms have been contributed by the community,
+e.g., by the authors of 
+NMSlib \cite{nmslib} and \texttt{FALCONN} \cite{falconn}. An earlier version of our
+framework is already widely used 
+as a benchmark referred to from other websites, see, e.g., \cite{nmslib,falconn,annoy,rpforest,kgraph}.
+
+\medskip
+
+\noindent{\textbf{Related work.}} 
+Generating reproducible experimental results is one of the greatest challenges in many areas of computer science, in particular in the machine learning community. As an example, \url{openml.org} \cite{openml2013} and \url{codalab.org} provide researchers with excellent platforms to share reproducible research results. 
+
+The automatic benchmarking system developed in connection with the
+\textsf{mlpack} machine learning library
+\cite{mlpack2013,edel2014automatic} %\footnote{\url{http://www.mlpack.org/benchmark.html}}
+shares many characteristics with our framework: it automates the process of
+running algorithms with preset parameters on certain datasets, and can
+visualize these results. However, the underlying approach is very
+different: it invokes whatever tools the implementations provide and parses
+their standard output to extract result metrics. Consequently, the system
+relies solely on the correctness of the algorithms' own implementations of
+quality measures, and adding a new quality
+measure would require a change in \emph{every single} algorithm implementation. Very recently,
+Li et al. \cite{LiZSWZL16} presented a comparison of many approximate nearest neighbor algorithms, 
+including many algorithms that are considered in our framework as well.  Their
+approach is to take existing algorithm implementations and to heavily modify
+them to fit a common style of query processing, in the process changing
+compiler flags (and sometimes even core parts of the implementation). There
+is no general framework, and including new features again requires manual
+changes in each single algorithm.
+
+Our benchmarking framework does not aim to replace these tools; instead, it
+complements them by taking a different approach. We
+only require that algorithms expose a simple programmatic interface for
+building
+data structures from training data and running queries. All the timing and quality measure
+computation is conducted within our framework, which lets us add new metrics
+without rerunning the algorithms, if the metric can be computed from the set
+of returned elements. Moreover, we benchmark each implementation as intended 
+by the author without making fundamental changes of our own.
+
+\medskip
+
+\noindent{\textbf{Contributions.}} 
+We describe our system for benchmarking approximate nearest neighbor algorithms with the general approach 
+described in Section~\ref{sec:system:design}. The system allows for easy experimentation with $k$-NN algorithms, 
+and visualizes algorithm runs in an approachable way. Moreover, in Section~\ref{sec:evaluation} we use our benchmark suite to overview the performance and quality of current state-of-the-art $k$-NN algorithms. This allows us to identify areas that already have competitive algorithms, to compare different methodological approaches to nearest neighbor search, but also to point out challenging datasets and metrics, where good implementations are missing or do not take full advantage of properties of the underlying metric. 
+Having this overview has immediate practical benefits, as users can select the right combination of algorithm and parameters for their application. In the longer term, we expect that more algorithms will become able to tune their own parameters according to the user's needs, and our benchmark suite will also serve as a testbed for this automatic tuning.
+
+\medskip
+
+\noindent{\textbf{What do we benchmark?}}
+To some extent, it is fair to say that our system primarily
+benchmarks \emph{implementations} rather than \emph{algorithmic
+ideas} \cite{KriegelSZ17};
+on the other hand, comparing sufficiently many different implementations
+might make it possible to draw reasonable inferences about the ideas they
+embody. Our evaluation, for example, includes three different implementations
+of a random projection forest and six implementations of $k$-NN graph-based
+algorithms; it shows clear differences between different implementations,
+but also a general difference between graph-based and random projection
+forest-based approaches. 

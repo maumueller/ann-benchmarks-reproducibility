@@ -1,0 +1,111 @@
+%\selectcolormodel{gray}
+    \begin{tikzpicture}[every mark/.append style={mark size=1.5pt}]
+        \begin{groupplot}[group style = {group size = 3 by 1, horizontal sep = 0.5em, group name = epsilon}, height=6cm, width=.43\textwidth, ylabel style = {yshift=-1.5ex},  xlabel style = {yshift=1.5ex},
+            xtick = {0, 0.25, 0.5, 0.75, 1},ymin=1, ymax=100000, grid = both, grid style={line width=.1pt, draw=gray!30},
+    major grid style={line width=.2pt,draw=gray!50},]
+        \nextgroupplot[
+            xlabel={Recall},
+            ylabel={QPS (1/s)},
+            ylabel style = {overlay},
+            ymode = log,
+			%width=0.4\textwidth,
+	        %height=4cm,
+            xmin=0,
+            xmax=1.05,
+            yticklabel style={/pgf/number format/fixed,
+                              /pgf/number format/precision=3},
+            ]
+            \addplot table {result_tables/gist-960-euclidean_100_annoy_k-nn_qps};
+        %\addlegendentry{Annoy};
+            
+        \addplot table {result_tables/gist-960-euclidean_100_faiss-ivf_k-nn_qps};
+
+        %\addlegendentry{faiss-ivf};
+            
+            
+        \addplot table {result_tables/gist-960-euclidean_100_hnsw(nmslib)_k-nn_qps};
+          
+        %\addlegendentry{hnsw};
+        \addplot table {result_tables/gist-960-euclidean_100_mrpt_k-nn_qps};
+    
+            %\addlegendentry{ mrpt };
+            \addplot table {result_tables/gist-960-euclidean_100_pynndescent_k-nn_qps};
+ 
+            %\addlegendentry{ pynndescent };
+
+
+   \addplot table {result_tables/gist-960-euclidean_100_SW-graph(nmslib)_k-nn_qps};
+
+        %\addlegendentry{SW-graph};
+            
+        \nextgroupplot[
+            xlabel={Recall},
+            %ylabel={QPS (1/s)},
+            %ylabel style ={overlay},
+            ymode = log,
+			%width=0.4\textwidth,
+	        %height=4cm,
+            xmin=0,
+            xmax=1.05,
+            yticklabels = {,,},
+            yticklabel style={/pgf/number format/fixed,
+                              /pgf/number format/precision=3}
+            ]
+            \addplot table {result_tables/gist-960-euclidean_100_annoy_epsilon_qps};
+        %\addlegendentry{annoy};
+            
+            
+            \addplot table {result_tables/gist-960-euclidean_100_faiss-ivf_epsilon_qps};
+		%\addlegendentry{faiss-ivf}    
+            
+            \addplot table {result_tables/gist-960-euclidean_100_hnsw(nmslib)_epsilon_qps};
+        %\addlegendentry{hnsw};
+            
+            
+            \addplot table {result_tables/gist-960-euclidean_100_mrpt_epsilon_qps};
+            %\addlegendentry{ mrpt };
+
+            \addplot table {result_tables/gist-960-euclidean_100_pynndescent_epsilon_qps};
+            %\addlegendentry{ pynndescent };
+            
+            \addplot table {result_tables/gist-960-euclidean_100_SW-graph(nmslib)_epsilon_qps};
+            %\addlegendentry{SW-graph};
+        \nextgroupplot[
+            xlabel={Recall},
+            %xlabel style = {yshift=1.5ex},
+            %ylabel={QPS (1/s)},
+            ymode = log,
+			%width=0.4\textwidth,
+	        %height=4cm,
+            xmin=0,
+            xmax=1.05,
+            yticklabels = {,,},
+            %yticklabel style={/pgf/number format/fixed,
+            %                  /pgf/number format/precision=0},
+            legend style = {at = {(0.6, 1.22)}},
+            legend columns = 9
+            ]
+
+            \addplot table {result_tables/gist-960-euclidean_100_annoy_largeepsilon_qps};
+            \addlegendentry{A};
+           
+            \addplot table {result_tables/gist-960-euclidean_100_faiss-ivf_largeepsilon_qps};
+            
+            \addlegendentry{FAI-IVF}
+            \addplot table {result_tables/gist-960-euclidean_100_hnsw(nmslib)_largeepsilon_qps};
+            
+            \addlegendentry{HNSW};
+            \addplot table {result_tables/gist-960-euclidean_100_mrpt_largeepsilon_qps};
+            
+            \addlegendentry{MRPT};
+            \addplot table {result_tables/gist-960-euclidean_100_pynndescent_largeepsilon_qps};
+
+            \addlegendentry{NND};
+            \addplot table {result_tables/gist-960-euclidean_100_SW-graph(nmslib)_largeepsilon_qps};
+
+            \addlegendentry{SWG};
+    \end{groupplot}
+\end{tikzpicture}
+    \caption{(Approximate) Recall-QPS (1/s) tradeoff - up and to the right is better,
+    \textsf{GIST} dataset, 100-NN; left: $\varepsilon = 0$, middle: $\varepsilon = 0.01$, right: $\varepsilon = 0.1$.}
+    \label{plot:approximation}

@@ -1,0 +1,32 @@
+    \begin{tikzpicture}[every mark/.append style={mark size=2pt}]
+        \begin{groupplot}[group style = {group size = 1 by 1, group name = hamming, vertical sep=2.1cm}, grid = both, grid style={line width=.1pt, draw=gray!30},
+    major grid style={line width=.2pt,draw=gray!50},height=4.5cm, width=\textwidth,
+              ymin = 0, ymax = 10000, xtick = {0, 0.25, 0.5, 0.75, 1}, max space between ticks=20]
+
+        \nextgroupplot[
+            ylabel={QPS (1/s)},
+            ylabel style ={overlay},
+            ymode = log,
+            yticklabel style={/pgf/number format/fixed,
+                              /pgf/number format/precision=3},
+            legend style = { at = { (.95, 1.25 ) }},
+            legend columns = 7
+            ]
+            \addplot table {result_tables/random-10nn-euclidean_10_annoy_k-nn_qps};
+            \addlegendentry{A};
+            \addplot table {result_tables/random-10nn-euclidean_10_faiss-ivf_k-nn_qps};
+            \addlegendentry{FAI-IVF};
+            \addplot table {result_tables/random-10nn-euclidean_10_hnsw(nmslib)_k-nn_qps};
+            \addlegendentry{HNSW};
+            %\addplot table {result_tables/random-10nn-euclidean_10_NGT-onng_k-nn_qps};
+            \addlegendentry{ONNG};
+            \addplot table {result_tables/random-10nn-euclidean_10_pynndescent_k-nn_qps};
+            \addlegendentry{NND};
+            \addplot table {result_tables/random-10nn-euclidean_10_kgraph_k-nn_qps};
+            \addlegendentry{KGraph};
+            \addplot table {result_tables/random-10nn-euclidean_10_SW-graph(nmslib)_k-nn_qps};
+            \addlegendentry{ SWG};
+    \end{groupplot}
+\end{tikzpicture}
+    \caption{Recall-QPS (1/s) tradeoff - up and to the right is better; \textsf{Rand-Euclidean} with 10-NN.}
+    \label{plot:random}

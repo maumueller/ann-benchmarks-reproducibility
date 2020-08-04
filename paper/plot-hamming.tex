@@ -1,0 +1,69 @@
+%\begin{figure}[h!]
+    %\centering
+    %\hspace{-4em}
+%\selectcolormodel{gray}
+    \begin{tikzpicture}[every mark/.append style={mark size=1.5pt}]
+        \begin{groupplot}[group style = {group size = 2 by 1, group name = hamming}, height=6cm, width=.55\textwidth,
+            ylabel style = {yshift=-1.5ex}, xlabel style = {yshift=1.5ex}, ymin = 10, ymax = 100000, xtick = {0, 0.25, 0.5, 0.75, 1}, max space between ticks=20, grid = both, grid style={line width=.1pt, draw=gray!30},
+    major grid style={line width=.2pt,draw=gray!50},]
+        \nextgroupplot[
+            xlabel={Recall},
+            ylabel={QPS (1/s)},
+            ymode = log,
+            yticklabel style={/pgf/number format/fixed,
+                              /pgf/number format/precision=3},
+            ylabel style = {overlay},
+            %legend pos = {outer north east},
+            legend style = {at = {(1.95, 1.33)}},
+            legend columns = 7
+            ]
+    
+        \addplot table {result_tables/sift-256-hamming_10_annoy-eucl_k-nn_qps};
+        \addlegendentry{A};
+        \addplot table {result_tables/sift-256-hamming_10_annoy_k-nn_qps};
+        \addlegendentry{A (Ham.)};
+
+        \addplot table {result_tables/sift-256-hamming_10_faiss-ivf_k-nn_qps};
+        \addlegendentry{FAI-IVF};
+
+
+        \addplot table {result_tables/sift-256-hamming_10_NGT-panng_k-nn_qps};
+        \addlegendentry{PANNG}; 
+
+        \addplot[mark=*, mark size=4, smooth] table {result_tables/sift-256-hamming_10_mih_k-nn_qps};
+        \addlegendentry{MIH};
+ 
+        \addplot table {result_tables/sift-128-euclidean_10_annoy_k-nn_qps};
+        \addlegendentry{A (Eucl.)}
+
+        \nextgroupplot[
+            xlabel={Recall},
+            %ylabel={QPS (1/s)},
+            ymode = log,
+            yticklabel style={/pgf/number format/fixed,
+                              /pgf/number format/precision=3},
+            ]
+        \addplot table {result_tables/word2bits-800-hamming_10_annoy-eucl_k-nn_qps};
+
+ %       \addlegendentry{A};
+        \addplot table {result_tables/word2bits-800-hamming_10_annoy_k-nn_qps};
+%        \addlegendentry{A (Ham.)};
+            
+        \addplot table {result_tables/word2bits-800-hamming_10_faiss-ivf_k-nn_qps};
+%        \addlegendentry{FAI-IVF};
+            
+        \addplot table {result_tables/word2bits-800-hamming_10_NGT-panng_k-nn_qps};
+ %       \addlegendentry{PANNG}; 
+
+        \addplot[mark=*,mark size=4, smooth]  table {result_tables/word2bits-800-hamming_10_mih_k-nn_qps};
+%        \addlegendentry{MIH};
+\end{groupplot}
+\end{tikzpicture}
+    \caption{Recall-QPS (1/s) tradeoff - up and to the right is better, 10-nearest neighbors,
+        left: \textsf{SIFT-Hamming}, right: \textsf{Word2bits}. The following versions of \texttt{Annoy} 
+    are shown in the plot:
+    \texttt{A}, standard Annoy that uses Euclidean distance as its distance metric;
+    \texttt{A (Ham.)}, Annoy with node splitting inspired by Bitsampling LSH and tuned to Hamming space; and
+    \texttt{A (Eucl.)}, the run of \texttt{Annoy} on \texttt{SIFT} from Figure~\ref{plot:performance} (bottom left).}
+    \label{plot:hamming}
+%\end{figure}

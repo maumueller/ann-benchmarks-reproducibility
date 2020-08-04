@@ -1,0 +1,52 @@
+We introduced \textsf{ANN-Benchmarks}, an automated benchmarking system for
+approximate nearest-neighbor algorithms. We described the system and used it
+to evaluate existing algorithms. Our evaluation showed that well-enginereed
+solutions for Euclidean and Cosine distance exist, and many techniques allow
+for fast nearest-neighbor search algorithms. At the moment, graph-based
+approaches such as \texttt{HNSW} or \texttt{ONNG} generally outperform the
+other approaches for very high recalls,
+although they can be tripped up by some kinds of dataset.
+Index building for graph-based approaches takes a long time for
+datasets with difficult queries.
+%We did
+%not find solutions targeting Hamming space under Hamming distance, but showed
+%that substituting Hamming space-specific techniques
+%into more general algorithms can greatly improve their running time.
+
+In future, we aim to add support for other metrics and quality measures, such
+as positional errors \cite{ZezulaSAR98}. Preliminary support
+exists for set similarity under Jaccard distance, but algorithm implementations
+are missing. Additionally, similarity joins 
+are an interesting variation of the problem worth benchmarking \cite{ChristianiPS18}. We remark that the data we store with each algorithm run allows for more analysis beyond looking at average query times. One could, for example, already look at the variance of running times between algorithms, which could yield insights when comparing different approaches.
+%Testing Hamming space-aware
+%versions of the graph-based methods and \texttt{FALCONN} could also be
+%instructive, as could 
+We also intend
+to simplify and further automate the process of re-running benchmarks
+when new versions of algorithm implementations appear. 
+
+As a general direction for future work, we remark that none of the most performant implementations are easy to use. From a user perspective, the internal parameters of the data structure would ideally be invisible; an algorithm should be able to tune itself for the dataset at hand, given just a handful of quality-related parameters (such as the desired recall or the index size).
+
+In the future, we plan to include a benchmarking mode for investigating this.
+A new tuning step will be added to the framework, letting implementations
+examine a small part of the dataset and to tune themselves for some given
+quality parameters before training begins.
+Implementors of algorithms would be able to test their auto-tuning techniques
+easily with such a benchmarking mode.
+
+Another general direction for future work is to get a better understanding which properties of a dataset make it easy or difficult for a specific algorithm. As shown in the evaluation, for many of the real-world datasets we get a homogeneous picture of how well algorithms perform against each other. On the other hand, we have given an example for a random dataset where implementations behave very differently. Which properties of a dataset make it simple or difficult
+for a specific algorithmic approach? For example, for graph-based algorithms there has been very little research except \cite{Laarhoven18} on the theoretical guarantees that they achieve. 
+
+Finally, answering batched queries, in particular on the GPU, is an interesting area for future work. There exist both novel LSH-based implementations \cite{WangSWR18} of nearest-neighbor algorithms and ideas on how to parallelize queries beyond running each query individually \cite{ChristianiPS18}. In particular, for a batch of queries an algorithm should exploit that individual queries might be close to each other.  
+
+
+
+
+\smallskip
+
+\noindent\textbf{Acknowledgements:} We thank both the reviewers of the earlier conference submission 
+and of this journal submission for their careful comments
+that allowed us to improve the paper. The first and third authors thank all members 
+of the algorithm group at the IT University of Copenhagen for fruitful discussions.
+In particular, we thank Rasmus Pagh for the suggestion of the random dataset.
+This work was supported by a GPU donation from NVIDIA.

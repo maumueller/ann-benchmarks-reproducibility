@@ -1,0 +1,95 @@
+%\begin{figure}[t]
+%\selectcolormodel{gray}    
+    \begin{tikzpicture}[every mark/.append style={mark size=1.5pt}]
+        \begin{groupplot}[group style = {group size = 3 by 1, horizontal sep = .5em, group name = robustness}, height=6cm, width=.425\textwidth,grid = both, grid style={line width=.1pt, draw=gray!30},
+    major grid style={line width=.2pt,draw=gray!50},
+            ylabel style = {yshift=-1.5ex}, xlabel style = {yshift=1.5ex}, ymin = 10, ymax = 100000, xtick = {0, 0.25, 0.5, 0.75, 1}, max space between ticks=20]
+        \nextgroupplot[
+            xlabel={Recall},
+            ylabel={QPS (1/s)},
+            ylabel style = {overlay},
+            ymode = log,
+			%width=\textwidth,
+	        %height=4cm,
+            yticklabel style={/pgf/number format/fixed,
+                              /pgf/number format/precision=3},
+            ]
+            \addplot table {result_tables/annoy_gist-960-euclidean_10_k-nn_qps};
+            %\addlegendentry{gist}
+            \addplot table {result_tables/annoy_glove-100-angular_10_k-nn_qps};
+            %\addlegendentry{glove};
+            \addplot table {result_tables/annoy_glove-100-angular_100_k-nn_qps};
+            %\addlegendentry{glove (k = 100)};
+            
+            \addplot table {result_tables/annoy_nytimes-256-angular_10_k-nn_qps};
+            %\addlegendentry{nytimes};
+            
+            \addplot table {result_tables/annoy_random-10nn-euclidean_10_k-nn_qps};
+            %\addlegendentry{rand-angular};
+            \addplot table {result_tables/annoy_sift-128-euclidean_10_k-nn_qps};
+            %\addlegendentry{sift};
+            
+            
+        \nextgroupplot[
+            xlabel={Recall},
+            %ylabel={QPS (1/s)},
+            %ylabel style = {overlay},
+            ymode = log,
+			%width=\textwidth,
+	        %height=4cm,
+            yticklabel style={/pgf/number format/fixed,
+                              /pgf/number format/precision=3},
+            yticklabels = {,,},
+            %legend pos = {outer north east},
+            %legend style = {
+            %    overlay,
+            %    at= {(1.2, .5)},
+            %    anchor = center,
+            %}
+            ]
+            \addplot table {result_tables/faiss-ivf_gist-960-euclidean_10_k-nn_qps};
+            %\addlegendentry{gist}
+            \addplot table {result_tables/faiss-ivf_glove-100-angular_10_k-nn_qps};
+            %\addlegendentry{glove};
+            \addplot table {result_tables/faiss-ivf_glove-100-angular_100_k-nn_qps};
+            %\addlegendentry{glove (k = 100)};
+            
+            \addplot table {result_tables/faiss-ivf_nytimes-256-angular_10_k-nn_qps};
+            %\addlegendentry{nytimes};
+            
+            \addplot table {result_tables/faiss-ivf_random-10nn-euclidean_10_k-nn_qps};
+            %\addlegendentry{rand-angular};
+            \addplot table {result_tables/faiss-ivf_sift-128-euclidean_10_k-nn_qps};
+            %\addlegendentry{sift};
+        \nextgroupplot[
+            xlabel={Recall},
+            %ylabel={QPS (1/s)},
+            ymode = log,
+			%width=\textwidth,
+	        %height=4cm,
+            yticklabel style={/pgf/number format/fixed,
+                              /pgf/number format/precision=3},
+            yticklabels = {,,},
+            legend style = {at = {(1, 1.3)}},
+            legend columns = 6
+            ]
+            \addplot table {result_tables/hnsw(nmslib)_gist-960-euclidean_10_k-nn_qps};
+            \addlegendentry{GIST}
+            \addplot table {result_tables/hnsw(nmslib)_glove-100-angular_10_k-nn_qps};
+            \addlegendentry{GLOVE};
+            \addplot table {result_tables/hnsw(nmslib)_glove-100-angular_100_k-nn_qps};
+            \addlegendentry{GLOVE (k = 100)};
+            
+            \addplot table {result_tables/hnsw(nmslib)_nytimes-256-angular_10_k-nn_qps};
+            \addlegendentry{NYTimes};
+            
+            \addplot table {result_tables/hnsw(nmslib)_random-10nn-euclidean_10_k-nn_qps};
+            \addlegendentry{Rand-Euclidean};
+            \addplot table {result_tables/hnsw(nmslib)_sift-128-euclidean_10_k-nn_qps};
+            \addlegendentry{SIFT};
+    \end{groupplot}
+\end{tikzpicture}
+    \caption{Recall-QPS (1/s) tradeoff - up and to the right is better, 10-nearest neighbors unless otherwise stated, 
+left: \texttt{Annoy}, middle: \texttt{FAISS-IVF}, right: \texttt{HNSW}.}
+    \label{plot:robustness}
+%\end{figure}
