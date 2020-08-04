@@ -1,0 +1,82 @@
+bit:
+  hamming:
+    mih:
+      docker-tag: ann-benchmarks-mih
+      module: ann_benchmarks.algorithms.subprocess
+      constructor: BitSubprocessPrepared
+      base-args: [["mih/bin/mihwrapper"]]
+      run-groups:
+        base:
+          # Note that MIH assumes that 5 <= dimension / chunks <= 37 and segfaults otherwise.
+          # This parameter space is explored below using the `chunk-factor`.
+          # A factor of 0 means that dimension / chunks = 5 which proceeds linearly to
+          # dimension / chunks = 37 for a factor of 1.
+          # The r parameter denotes a reordering with n / r steps. If r is 0, no reordering
+          # takes places. Otherwise, n / r points from the dataset are used for a
+          # re-ording process. MIH requires either r = 0 or r >= 2.
+          args: { "d" : "@dimension", "r" : [0, 2, 3],
+            "chunk-factor" : [0.2, 0.5, 0.8] }
+    pynndescent:
+      docker-tag: ann-benchmarks-pynndescent
+      module: ann_benchmarks.algorithms.pynndescent
+      constructor: PyNNDescent
+      base-args: ["@metric"]
+      run-groups:
+        NN-20:
+          arg-groups:
+            - {"n_neighbors": [20], "diversify_epsilon": [0.75, 1.0],
+               "pruning_degree_multiplier":[1.0, 1.5], leaf_size: 32}
+          query-args: [[0.0, 0.01, 0.02, 0.04, 0.08, 0.12, 0.16]]
+        NN-40:
+          arg-groups:
+            - {"n_neighbors": [40], "diversify_epsilon": [0.5, 1.0],
+               "pruning_degree_multiplier":[1.5, 2.0], leaf_size: 48}
+          query-args: [[0.0, 0.04, 0.08, 0.12, 0.16, 0.20, 0.24]]
+        NN-80:
+          arg-groups:
+            - {"n_neighbors": [80], "diversify_epsilon": [0.25, 1.0],
+               "pruning_degree_multiplier":[1.75, 2.25], leaf_size: 64}
+          query-args: [[0.0, 0.08, 0.12, 0.16, 0.20, 0.24, 0.28, 0.32]]
+        NN-120:
+          arg-groups:
+            - {"n_neighbors": [120], "diversify_epsilon": [0.0, 1.0],
+               "pruning_degree_multiplier":[2.0, 2.5], leaf_size: 80}
+          query-args: [[0.08, 0.16, 0.20, 0.24, 0.28, 0.32, 0.36]]
+    annoy:
+      docker-tag: ann-benchmarks-annoy
+      module: ann_benchmarks.algorithms.annoy
+      constructor: Annoy
+      base-args: ["@metric"]
+      run-groups:
+        annoy:
+          args: [[100, 200, 400]]
+          query-args: [[100, 200, 400, 1000, 2000, 4000, 10000, 20000, 40000,
+                      100000, 200000, 400000]]
+    NGT-panng:
+      docker-tag: ann-benchmarks-ngt
+      module: ann_benchmarks.algorithms.panng_ngt
+      constructor : PANNG
+      base-args : ["euclidean", "Float"]
+      run-groups :
+        panng:
+           args : [{'edge': 20, 'pathadj': 40, 'searchedge': 60}]
+           query-args : [[0.6, 0.8, 0.9, 1.0, 1.02, 1.05, 1.1, 1.2]]
+    annoy-euclidean:
+      docker-tag: ann-benchmarks-annoy
+      module: ann_benchmarks.algorithms.annoy
+      constructor: Annoy
+      base-args: ["euclidean"]
+      run-groups:
+        annoy:
+          args: [[100, 200, 400]]
+          query-args: [[100, 200, 400, 1000, 2000, 4000, 10000, 20000, 40000,
+                      100000, 200000, 400000]]
+    faiss-ivf:
+      docker-tag: ann-benchmarks-faiss
+      module: ann_benchmarks.algorithms.faiss
+      constructor: FaissIVF
+      base-args: ["euclidean"]
+      run-groups:
+        base:
+          args: [[32,64,128,256,512,1024,2048,4096,8192]]
+          query-args: [[1, 5, 10, 50, 100, 200]]
