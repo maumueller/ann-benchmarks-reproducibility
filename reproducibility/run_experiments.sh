@@ -1,3 +1,4 @@
+python3 install.py
 # K=10 runs
 ALGODEF=reproducibility/standard_runs.yaml
 

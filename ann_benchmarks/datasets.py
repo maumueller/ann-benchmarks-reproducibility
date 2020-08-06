@@ -3,9 +3,12 @@ import numpy
 import os
 import random
 import sys
-
-from urllib.request import urlopen
-from urllib.request import urlretrieve
+try:
+        from urllib import urlretrieve
+        from urllib import urlopen
+except ImportError:
+        from urllib.request import urlretrieve
+        from urllib.request import urlopen
 
 from ann_benchmarks.distance import dataset_transform
 

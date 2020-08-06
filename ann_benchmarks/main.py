@@ -225,13 +225,20 @@ def main():
     if args.parallelism > multiprocessing.cpu_count() - 1:
         raise Exception('Parallelism larger than %d! (CPU count minus one)' % (multiprocessing.cpu_count() - 1))
 
-    # Multiprocessing magic to farm this out to all CPUs
     queue = multiprocessing.Queue()
     for definition in definitions:
         queue.put(definition)
-    workers = [multiprocessing.Process(target=run_worker, args=(i+1, args, queue))
-               for i in range(args.parallelism)]
-    [worker.start() for worker in workers]
-    [worker.join() for worker in workers]
 
-    # TODO: need to figure out cleanup handling here
+    if args.batch:
+        run_worker("0-%d" % (multiprocessing.cpu_count() - 1), args, queue)
+    else:
+        # Multiprocessing magic to farm this out to all CPUs
+        queue = multiprocessing.Queue()
+        for definition in definitions:
+            queue.put(definition)
+        workers = [multiprocessing.Process(target=run_worker, args=(i+1, args, queue))
+                   for i in range(args.parallelism)]
+        [worker.start() for worker in workers]
+        [worker.join() for worker in workers]
+
+        # TODO: need to figure out cleanup handling here

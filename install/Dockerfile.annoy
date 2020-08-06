@@ -1,5 +1,5 @@
 FROM ann-benchmarks
 
 RUN git clone https://github.com/spotify/annoy
-RUN cd annoy && python3 setup.py install
+RUN cd annoy && git checkout 94988766fcfcb52114fb5e2deba9dca829f01db4 && python3 setup.py install
 RUN python3 -c 'import annoy'
