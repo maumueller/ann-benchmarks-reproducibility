@@ -1,5 +1,5 @@
 float:
-  any:
+  euclidean:
     faiss-ivf:
       docker-tag: ann-benchmarks-faiss
       module: ann_benchmarks.algorithms.faiss
@@ -58,4 +58,3 @@ float:
             - {"M": 8, "post": 0, "efConstruction": 400}
             - False
           query-args: [[1, 2, 5, 10, 20, 30, 50, 70, 90, 120, 160]]
-    
