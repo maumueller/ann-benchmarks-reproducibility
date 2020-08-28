@@ -17,6 +17,8 @@ class FLANN(BaseANN):
             algorithm='autotuned', log_level='info')
         if self._metric == 'angular':
             X = sklearn.preprocessing.normalize(X, axis=1, norm='l2')
+        if X.dtype != numpy.float32:
+            X = X.astype(numpy.float32)
         self._flann.build_index(X)
 
     def query(self, v, n):
