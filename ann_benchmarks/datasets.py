@@ -274,8 +274,7 @@ def random_bitstring(out_fn, n_dims, n_samples, n_queries):
 def word2bits(out_fn, path, fn):
     import tarfile
     local_fn = fn + '.tar.gz'
-    url = 'http://web.stanford.edu/~maxlam/word_vectors/compressed/%s/%s.tar.gz' % (  # noqa
-        path, fn)
+    url = 'http://itu.dk/people/maau/ann-benchmark-datasets/%s.tar.gz' % fn
     download(url, local_fn)
     print('parsing vectors in %s...' % local_fn)
     with tarfile.open(local_fn, 'r:gz') as t:

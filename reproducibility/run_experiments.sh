@@ -1,3 +1,7 @@
+for ds in glove-100-angular sift-128-euclidean random-10nn-euclidean gist-960-euclidean nytimes-256-angular sift-256-hamming word2bits-800-hamming; do
+    python3 create_dataset.py --dataset $ds
+done
+
 # K=10 runs
 ALGODEF=reproducibility/standard_runs.yaml
 
