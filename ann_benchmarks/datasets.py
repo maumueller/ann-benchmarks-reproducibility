@@ -274,8 +274,7 @@ def random_bitstring(out_fn, n_dims, n_samples, n_queries):
 def word2bits(out_fn, path, fn):
     import tarfile
     local_fn = fn + '.tar.gz'
-    url = 'http://web.stanford.edu/~maxlam/word_vectors/compressed/%s/%s.tar.gz' % (  # noqa
-        path, fn)
+    url = 'http://itu.dk/people/maau/ann-benchmark-datasets/%s.tar.gz' % fn
     download(url, local_fn)
     print('parsing vectors in %s...' % local_fn)
     with tarfile.open(local_fn, 'r:gz') as t:
@@ -349,6 +348,41 @@ def random_jaccard(out_fn, n=10000, size=50, universe=80):
             X[i][j] = True
     X_train, X_test = train_test_split(X, test_size=100)
     write_output(X_train, X_test, out_fn, 'jaccard', 'bit')
+
+def random_10nn(out_fn, n_dims, n_data, n_queries):
+    from math import sqrt
+    def get_random_vec(d, length = 1):
+        """
+        Returns a random d-dimensional vector of a given expected length
+        """
+        return numpy.random.normal(0, 1, d) * length / sqrt(d)
+
+    def distort_vec(vec, target_distance):
+        """
+        Returns a random vector at an (expected) given distance to the given vector.
+        """
+        d = len(vec)
+        distortion = numpy.random.normal(0, 1, d) * target_distance / sqrt(d)
+        return vec + distortion
+
+    X_train, X_test = [], []
+    d = int(n_dims / 2)
+    n_points = n_data - n_queries * 10
+
+    for _ in range(n_points):
+        v = get_random_vec(d)
+        X_train.append(numpy.append(v, [0.0] * d))
+
+    generate_queries_from = numpy.random.choice(range(n_points), n_queries)
+
+    # place a random planted query, vary distance between 0.1 and 0.6
+    for i, idx in enumerate(generate_queries_from):
+        v = numpy.append(X_train[idx][:d], get_random_vec(d, 1/sqrt(2)))
+        X_test.append(v)
+        for _ in range(10):
+            X_train.append(distort_vec(v, 0.1 + 0.5 * i / n_queries))
+
+    write_output(numpy.array(X_train[:n_data]), numpy.array(X_test), out_fn, 'euclidean')
 
 
 
@@ -433,4 +467,5 @@ DATASETS = {
     'sift-256-hamming': lambda out_fn: sift_hamming(
         out_fn, 'sift.hamming.256'),
     'kosarak-jaccard': lambda out_fn: kosarak(out_fn),
+    'random-10nn-euclidean': lambda out_fn: random_10nn(out_fn, 200, 1000000, 10000),
 }
