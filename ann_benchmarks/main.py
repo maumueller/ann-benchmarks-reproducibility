@@ -231,10 +231,6 @@ def main():
     else:
         logger.info(f'Order: {definitions}')
 
-    if args.parallelism > multiprocessing.cpu_count() - 1:
-        raise Exception('Parallelism larger than %d! (CPU count minus one)' % (multiprocessing.cpu_count() - 1))
-
-    queue = multiprocessing.Queue()
     for definition in definitions:
         queue.put(definition)
     if args.batch and args.parallelism > 1:
