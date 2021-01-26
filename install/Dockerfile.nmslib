@@ -1,9 +1,9 @@
 FROM ann-benchmarks
 
 RUN apt-get update && apt-get install -y cmake libboost-all-dev libeigen3-dev libgsl0-dev
-RUN git clone https://github.com/searchivarius/nmslib.git && cd nmslib && git checkout 2e424ef7c6eff10ecaf47392fd99f93f645e752f # 
+RUN git clone https://github.com/searchivarius/nmslib.git && cd nmslib && git checkout cd79cffafbcd60727510cd610ed4adb96301f5b4
 RUN cd nmslib/similarity_search && cmake . -DWITH_EXTRAS=1
-RUN cd nmslib/similarity_search && make
+RUN cd nmslib/similarity_search && make -j4
 RUN pip3 install pybind11
 RUN cd nmslib/python_bindings && python3 setup.py build
 RUN cd nmslib/python_bindings && python3 setup.py install
