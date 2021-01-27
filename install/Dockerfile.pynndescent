@@ -1,5 +1,6 @@
 FROM ann-benchmarks
 
 RUN pip3 install 'numba==0.46' 'llvmlite==0.30' scikit-learn
-RUN pip3 install 'pynndescent==0.2.1'
+RUN git clone https://github.com/lmcinnes/pynndescent
+RUN cd pynndescent && git checkout 6bbbd97cac895aaf322521dfd52ca0e4aac6831e && python3 setup.py install
 RUN python3 -c 'import pynndescent'
