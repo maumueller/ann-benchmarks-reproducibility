@@ -18,7 +18,7 @@
             legend columns = 7
             ]
     
-        \addplot table {result_tables/sift-256-hamming_10_annoy-eucl_k-nn_qps};
+        \addplot table {result_tables/sift-256-hamming_10_annoy-euclidean_k-nn_qps};
         \addlegendentry{A};
         \addplot table {result_tables/sift-256-hamming_10_annoy_k-nn_qps};
         \addlegendentry{A (Ham.)};
@@ -43,7 +43,7 @@
             yticklabel style={/pgf/number format/fixed,
                               /pgf/number format/precision=3},
             ]
-        \addplot table {result_tables/word2bits-800-hamming_10_annoy-eucl_k-nn_qps};
+        \addplot table {result_tables/word2bits-800-hamming_10_annoy-euclidean_k-nn_qps};
 
  %       \addlegendentry{A};
         \addplot table {result_tables/word2bits-800-hamming_10_annoy_k-nn_qps};

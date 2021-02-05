@@ -76,7 +76,7 @@ to_plot_algos = list(algos.keys())
 
 result = []
 
-for algo, time in df[(df.algorithm.isin(to_plot_algos)) & (df.dataset=="glove-100-angular") & (df["count"] == 100) & (df["k-nn"] >= 0.9)][['algorithm', 'build']].groupby(['algorithm']).min().sort_values(by="build").itertuples():
+for algo, time in df[(df.algorithm.isin(to_plot_algos)) & (df.dataset=="glove-100-angular") & (df["count"] == 10) & (df["k-nn"] >= 0.9)][['algorithm', 'build']].groupby(['algorithm']).min().sort_values(by="build").itertuples():
     result.append((algos[algo], ceil(time)))
 
 with open("%s/build_bar.tex" % outputdir, "w") as f:
