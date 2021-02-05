@@ -34,7 +34,7 @@ for dataset in datasets:
     for count in [10, 100]:
         for x_metric in ['k-nn', 'epsilon', 'largeepsilon']:
             for y_metric in ['qps', 'build', 'queriessize', 'qps*buildtime']:
-                test_df = df[(df.dataset == dataset) & (df["count"] == count)]
+                test_df = df[(df.dataset == dataset) & (df["count"] == count) & (df.batch == False)]
                 test_df = get_pareto_frontier(test_df, x_metric, y_metric, "algorithm", y_metric == 'queriessize')
                 for algorithm in set(test_df.algorithm):
                     fn = "%s_%d_%s_%s_%s" % (dataset, count, algorithm, x_metric, y_metric)
@@ -42,16 +42,39 @@ for dataset in datasets:
                         for x, y in test_df[test_df.algorithm == algorithm][[x_metric, y_metric]].itertuples(index=False):
                             f.write("%f %f\n" % (x, y))
 
+for dataset in datasets:
+    for count in [10, 100]:
+        for x_metric in ['k-nn', 'epsilon', 'largeepsilon']:
+            for y_metric in ['qps', 'build', 'queriessize', 'qps*buildtime']:
+                test_df = df[(df.dataset == dataset) & (df["count"] == count) & (df.batch == True)]
+                test_df = get_pareto_frontier(test_df, x_metric, y_metric, "algorithm", y_metric == 'queriessize')
+                for algorithm in set(test_df.algorithm):
+                    fn = "%s_%d_%s-batch_%s_%s" % (dataset, count, algorithm, x_metric, y_metric)
+                    with open("%s/%s" % (outputdir, fn), 'w') as f:
+                        for x, y in test_df[test_df.algorithm == algorithm][[x_metric, y_metric]].itertuples(index=False):
+                            f.write("%f %f\n" % (x, y))
 algorithms = set(df.algorithm)
 
 for algorithm in algorithms:
         for x_metric in ['k-nn', 'epsilon', 'largeepsilon']:
             for y_metric in ['qps', 'build', 'queriessize', 'qps*buildtime']:
-                test_df = df[(df.algorithm == algorithm)]
+                test_df = df[(df.algorithm == algorithm) & (df.batch == False)]
                 test_df = get_pareto_frontier(test_df, x_metric, y_metric, "dslabel", y_metric == 'queriessize')
                 for dataset in set(test_df.dataset):
                     for count in [10, 100]:
                         fn = "%s_%s_%d_%s_%s" % (algorithm, dataset, count, x_metric, y_metric)
+                        with open("%s/%s" % (outputdir, fn), 'w') as f:
+                            for x, y in test_df[(test_df.dataset == dataset) & (test_df["count"] == count)][[x_metric, y_metric]].itertuples(index=False):
+                                f.write("%f %f\n" % (x, y))
+
+for algorithm in algorithms:
+        for x_metric in ['k-nn', 'epsilon', 'largeepsilon']:
+            for y_metric in ['qps', 'build', 'queriessize', 'qps*buildtime']:
+                test_df = df[(df.algorithm == algorithm) & (df.batch == True)]
+                test_df = get_pareto_frontier(test_df, x_metric, y_metric, "dslabel", y_metric == 'queriessize')
+                for dataset in set(test_df.dataset):
+                    for count in [10, 100]:
+                        fn = "%s-batch_%s_%d_%s_%s" % (algorithm, dataset, count, x_metric, y_metric)
                         with open("%s/%s" % (outputdir, fn), 'w') as f:
                             for x, y in test_df[(test_df.dataset == dataset) & (test_df["count"] == count)][[x_metric, y_metric]].itertuples(index=False):
                                 f.write("%f %f\n" % (x, y))
