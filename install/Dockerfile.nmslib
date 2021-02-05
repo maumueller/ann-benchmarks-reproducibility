@@ -4,7 +4,7 @@ RUN apt-get update && apt-get install -y cmake libboost-all-dev libeigen3-dev li
 RUN git clone https://github.com/searchivarius/nmslib.git && cd nmslib && git checkout cd79cffafbcd60727510cd610ed4adb96301f5b4
 RUN cd nmslib/similarity_search && cmake . -DWITH_EXTRAS=1
 RUN cd nmslib/similarity_search && make -j4
-RUN pip3 install pybind11
+RUN pip3 install pybind11==2.6.1
 RUN cd nmslib/python_bindings && python3 setup.py build
 RUN cd nmslib/python_bindings && python3 setup.py install
 RUN python3 -c 'import nmslib'
