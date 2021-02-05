@@ -264,6 +264,7 @@ def run_docker(definition, dataset, count, runs, timeout, batch, cpu_limit,
             logger.error('Child process for container %s raised exception %d' % (container.short_id, exit_code))
     except:
         logger.error('Container.wait for container %s failed with exception' % container.short_id)
+        logger.error('Invoked with %s' % cmd)
         traceback.print_exc()
     finally:
         container.remove(force=True)
