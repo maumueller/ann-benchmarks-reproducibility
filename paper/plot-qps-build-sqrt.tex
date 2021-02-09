@@ -20,6 +20,12 @@
             \addlegendentry{ BT};
             \addplot table {result_tables/glove-100-angular_10_faiss-ivf_k-nn_qps*buildtime};
             \addlegendentry{FAI-IVF};
+            \addplot table {result_tables/glove-100-angular_10_hnsw(nmslib)_k-nn_qps*buildtime};
+            \addlegendentry{hnsw(nmslib)};
+            \addplot table {result_tables/glove-100-angular_10_NGT-onng_k-nn_qps*buildtime};
+            \addlegendentry{NNG};
+            \addplot table {result_tables/glove-100-angular_10_pynndescent_k-nn_qps*buildtime};
+            \addlegendentry{NND};
             \addplot table {result_tables/glove-100-angular_10_SW-graph(nmslib)_k-nn_qps*buildtime};
             \addlegendentry{ SWG };
             \addplot table {result_tables/glove-100-angular_10_bruteforce-blas_k-nn_qps*buildtime};
