@@ -121,7 +121,7 @@ float:
       docker-tag: ann-benchmarks-ngt
       module: ann_benchmarks.algorithms.onng_ngt
       constructor : ONNG
-      base-args : ["@metric", "Float", 0.1]
+      base-args : ["@metric", "Float"]
       run-groups :
         onng:
            args : [{'edge': 100, 'outdegree': 10, 'indegree': 120}]

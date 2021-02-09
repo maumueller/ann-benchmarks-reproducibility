@@ -10,17 +10,17 @@ from ann_benchmarks.constants import INDEX_DIR
 
 
 class ONNG(BaseANN):
-    def __init__(self, metric, object_type, epsilon, param):
+    def __init__(self, metric, object_type, param):
         metrics = {'euclidean': '2', 'angular': 'C'}
         self._edge_size = int(param['edge'])
         self._outdegree = int(param['outdegree'])
         self._indegree = int(param['indegree'])
         self._metric = metrics[metric]
         self._object_type = object_type
-        self._edge_size_for_search = int(param['search_edge']) if 'search_edge' in param.keys() else -2
         self._tree_disabled = (param['tree'] == False) if 'tree' in param.keys() else False
+        self._edge_size_for_search = -2
         self._build_time_limit = 4
-        self._epsilon = epsilon
+        self._epsilon = 0.0
         print('ONNG: edge_size=' + str(self._edge_size))
         print('ONNG: outdegree=' + str(self._outdegree))
         print('ONNG: indegree=' + str(self._indegree))
