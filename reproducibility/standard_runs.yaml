@@ -91,8 +91,9 @@ float:
           # 100), Annoy("angular", 200), and Annoy("angular", 400) -- each of
           # which will be used to run 12 different queries.
     bruteforce-blas:
-      docker-tag: ann-benchmarks-sklearn
+      docker-tag: ann-benchmarks-annoy
       module: ann_benchmarks.algorithms.bruteforce
+      disabled: true
       constructor: BruteForceBLAS
       base-args: ["@metric"]
       run-groups:
