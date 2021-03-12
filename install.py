@@ -12,7 +12,7 @@ def build(library, args):
         q = " ".join(["--build-arg " + x.replace(" ", "\\ ") for x in args])
     else:
         q = ""
-    
+
     try:
         subprocess.check_call(
             'docker build %s --rm -t ann-benchmarks-%s -f'
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     elif os.getenv('LIBRARY'):
         tags = [os.getenv('LIBRARY')]
     else:
-        tags = [fn.split('.')[-1] for fn in os.listdir('install') if fn.startswith('Dockerfile.')]
+        tags = [fn.split('.')[-1] for fn in os.listdir('install') if fn.startswith('Dockerfile.') and not 'faissgpu' in fn]
 
     print('Building algorithm images... with (%d) processes' % args.proc)
 
