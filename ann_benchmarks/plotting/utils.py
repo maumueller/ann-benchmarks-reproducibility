@@ -79,6 +79,12 @@ def compute_metrics_all_runs(dataset, res, recompute=False):
         metrics_cache = get_or_create_metrics(run)
 
         dataset = properties['dataset']
+        try:
+            dataset = dataset.decode()
+            algo = algo.decode()
+            algo_name = algo_name.decode()
+        except:
+            pass
 
         run_result = {
             'algorithm': algo,
