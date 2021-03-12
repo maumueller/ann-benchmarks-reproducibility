@@ -94,11 +94,17 @@ def main():
              ' the best result',
         default=5)
     parser.add_argument(
+        '--pin',
+        metavar='cpu',
+        type=positive_int,
+        help='pin process to given cpu',
+        default=1)
+    parser.add_argument(
         '--timeout',
         type=int,
         help='Timeout (in seconds) for each individual algorithm run, or -1'
              'if no timeout should be set',
-        default=24 * 3600)
+        default=12 * 3600)
     parser.add_argument(
         '--local',
         action='store_true',
@@ -233,13 +239,16 @@ def main():
 
     if args.parallelism > multiprocessing.cpu_count() - 1:
         raise Exception('Parallelism larger than %d! (CPU count minus one)' % (multiprocessing.cpu_count() - 1))
+    if args.parallelism > 1 and args.pin != 1:
+        raise Exception('Cannot pin to single CPU if parallism is set')
 
     queue = multiprocessing.Queue()
     for definition in definitions:
         queue.put(definition)
     if args.batch and args.parallelism > 1:
         raise Exception(f"Batch mode uses all available CPU resources, --parallelism should be set to 1. (Was: {args.parallelism})")
-    workers = [multiprocessing.Process(target=run_worker, args=(i+1, args, queue))
+    start_cpu = args.pin
+    workers = [multiprocessing.Process(target=run_worker, args=(i + args.pin, args, queue))
                for i in range(args.parallelism)]
     [worker.start() for worker in workers]
     [worker.join() for worker in workers]

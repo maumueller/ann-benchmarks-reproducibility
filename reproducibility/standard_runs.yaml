@@ -283,14 +283,6 @@ float:
             - {"NN": 3}
             - False
           query-args: [[120, 80, 60, 40, 20, 10, 8, 4, 2]]
-    rpforest:
-      docker-tag: ann-benchmarks-rpforest
-      module: ann_benchmarks.algorithms.rpforest
-      constructor: RPForest
-      run-groups:
-        base:
-          args: [[3, 10, 40, 100, 400],
-                [3, 10, 40, 100, 400]]
     pynndescent:
       docker-tag: ann-benchmarks-pynndescent
       module: ann_benchmarks.algorithms.pynndescent

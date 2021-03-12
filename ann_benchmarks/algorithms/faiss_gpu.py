@@ -12,7 +12,7 @@ from ann_benchmarks.algorithms.base import BaseANN
 
 
 class FaissGPUBF(BaseANN):
-    def __init__(self):
+    def __init__(self, args):
         self.name = 'FaissGPU-BF'
         self._res = faiss.StandardGpuResources()
         self._index = None
