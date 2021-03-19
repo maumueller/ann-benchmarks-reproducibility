@@ -132,5 +132,5 @@ The following publication details design principles behind the benchmarking fram
 - M. Aumüller, E. Bernhardsson, A. Faithfull:
 [ANN-Benchmarks: A Benchmarking Tool for Approximate Nearest Neighbor Algorithms](https://arxiv.org/abs/1807.05614). Information Systems 2019. DOI: [10.1016/j.is.2019.02.006](https://doi.org/10.1016/j.is.2019.02.006)
 - M. Aumüller, E. Bernhardsson, A. Faithfull:
-[ANN-Benchmarks: A Benchmarking Tool for Approximate Nearest Neighbor Algorithms](). 
+[Reproducibility Paper for ANN-Benchmarks: A Benchmarking Tool for Approximate Nearest Neighbor Algorithms](http://itu.dk/people/maau/additional/ann_benchmarks_reproducibility.pdf). 
 - Research artifacts:  <https://doi.org/10.5281/zenodo.4607761>
