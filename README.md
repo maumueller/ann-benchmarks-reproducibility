@@ -1,147 +1,136 @@
-Benchmarking nearest neighbors
-==============================
+Reproducibility Repository for ANN-Benchmarks: A benchmarking tool for approximate nearest neighbor search algorithms
+==================
 
-[![travis badge](https://img.shields.io/travis/erikbern/ann-benchmarks/master.svg?style=flat)](https://travis-ci.org/erikbern/ann-benchmarks)
+This repository contains code to reproduce the experiments in 
 
-Doing fast searching of nearest neighbors in high dimensional spaces is an increasingly important problem, but so far there has not been a lot of empirical attempts at comparing approaches in an objective way.
+>  M. Aumüller, E. Bernhardsson, A. Faithfull: [ANN-Benchmarks: A Benchmarking Tool for Approximate Nearest Neighbor Algorithms](https://arxiv.org/abs/1807.05614). Information Systems 2019. DOI: [10.1016/j.is.2019.02.006](https://doi.org/10.1016/j.is.2019.02.006) 
 
-This project contains some tools to benchmark various implementations of approximate nearest neighbor (ANN) search for different metrics. We have pregenerated datasets (in HDF5) formats and we also have Docker containers for each algorithm. There's a [test suite](https://travis-ci.org/erikbern/ann-benchmarks) that makes sure every algorithm works.
+See <https://github.com/erikbern/ann-benchmarks> for the most recent state-of-art in nearest neighbor search.
 
-Evaluated
-=========
+Reproduction
+=============
 
-* [Annoy](https://github.com/spotify/annoy)
-* [FLANN](http://www.cs.ubc.ca/research/flann/)
-* [scikit-learn](http://scikit-learn.org/stable/modules/neighbors.html): LSHForest, KDTree, BallTree
-* [PANNS](https://github.com/ryanrhymes/panns)
-* [NearPy](http://pixelogik.github.io/NearPy/)
-* [KGraph](https://github.com/aaalgo/kgraph)
-* [NMSLIB (Non-Metric Space Library)](https://github.com/nmslib/nmslib): SWGraph, HNSW, BallTree, MPLSH
-* [hnswlib (a part of nmslib project)](https://github.com/nmslib/hnsw)
-* [RPForest](https://github.com/lyst/rpforest)
-* [FAISS](https://github.com/facebookresearch/faiss.git)
-* [DolphinnPy](https://github.com/ipsarros/DolphinnPy)
-* [Datasketch](https://github.com/ekzhu/datasketch)
-* [PyNNDescent](https://github.com/lmcinnes/pynndescent)
-* [MRPT](https://github.com/teemupitkanen/mrpt)
-* [NGT](https://github.com/yahoojapan/NGT): ONNG, PANNG, QG
-* [SPTAG](https://github.com/microsoft/SPTAG)
-* [PUFFINN](https://github.com/puffinn/puffinn)
-* [N2](https://github.com/kakao/n2)
-* [ScaNN](https://github.com/google-research/google-research/tree/master/scann)
-* [Elastiknn](https://github.com/alexklibisz/elastiknn)
-* [OpenDistro Elasticsearch KNN](https://github.com/opendistro-for-elasticsearch/k-NN)
+Installation
+------------
 
-Data sets
-=========
+We provide a `Vagrantfile` in the [research artifacts](https://doi.org/10.5281/zenodo.4607761)  that automatically sets up a VM ready to carry out the experiments.
 
-We have a number of precomputed data sets for this. All data sets are pre-split into train/test and come with ground truth data in the form of the top 100 neighbors. We store them in a HDF5 format:
+To reproduce all steps, start from a fresh installation of Ubuntu 18.04. Next, install Docker as outlined on
+<https://docs.docker.com/engine/install/ubuntu/>.
+Then, install Python 3.6 as follows:
 
-| Dataset                                                           | Dimensions | Train size | Test size | Neighbors | Distance  | Download                                                                   |
-| ----------------------------------------------------------------- | ---------: | ---------: | --------: | --------: | --------- | -------------------------------------------------------------------------- |
-| [DEEP1B](http://sites.skoltech.ru/compvision/noimi/)              |         96 |  9,990,000 |    10,000 |       100 | Angular   | [HDF5](http://ann-benchmarks.com/deep-image-96-angular.hdf5) (3.6GB)
-| [Fashion-MNIST](https://github.com/zalandoresearch/fashion-mnist) |        784 |     60,000 |    10,000 |       100 | Euclidean | [HDF5](http://ann-benchmarks.com/fashion-mnist-784-euclidean.hdf5) (217MB) |
-| [GIST](http://corpus-texmex.irisa.fr/)                            |        960 |  1,000,000 |     1,000 |       100 | Euclidean | [HDF5](http://ann-benchmarks.com/gist-960-euclidean.hdf5) (3.6GB)          |
-| [GloVe](http://nlp.stanford.edu/projects/glove/)                  |         25 |  1,183,514 |    10,000 |       100 | Angular   | [HDF5](http://ann-benchmarks.com/glove-25-angular.hdf5) (121MB)            |
-| GloVe                                                             |         50 |  1,183,514 |    10,000 |       100 | Angular   | [HDF5](http://ann-benchmarks.com/glove-50-angular.hdf5) (235MB)            |
-| GloVe                                                             |        100 |  1,183,514 |    10,000 |       100 | Angular   | [HDF5](http://ann-benchmarks.com/glove-100-angular.hdf5) (463MB)           |
-| GloVe                                                             |        200 |  1,183,514 |    10,000 |       100 | Angular   | [HDF5](http://ann-benchmarks.com/glove-200-angular.hdf5) (918MB)           |
-| [Kosarak](http://fimi.uantwerpen.be/data/)                        |      27983 |     74,962 |       500 |       100 | Jaccard   | [HDF5](http://ann-benchmarks.com/kosarak-jaccard.hdf5) (2.0GB)             |
-| [MNIST](http://yann.lecun.com/exdb/mnist/)                        |        784 |     60,000 |    10,000 |       100 | Euclidean | [HDF5](http://ann-benchmarks.com/mnist-784-euclidean.hdf5) (217MB)         |
-| [NYTimes](https://archive.ics.uci.edu/ml/datasets/bag+of+words)   |        256 |    290,000 |    10,000 |       100 | Angular   | [HDF5](http://ann-benchmarks.com/nytimes-256-angular.hdf5) (301MB)         |
-| [SIFT](https://corpus-texmex.irisa.fr/)                           |        128 |  1,000,000 |    10,000 |       100 | Euclidean | [HDF5](http://ann-benchmarks.com/sift-128-euclidean.hdf5) (501MB)          |
-| [Last.fm](https://github.com/erikbern/ann-benchmarks/pull/91)     |         65 |    292,385 |    50,000 |       100 | Angular   | [HDF5](http://ann-benchmarks.com/lastfm-64-dot.hdf5) (135MB)               |
+```bash
+$ sudo apt-get update 
+$ sudo apt-get install -y python3-pip build-essential git
+```
 
-Results
-=======
+Finally, clone the repository and install necessary dependencies and compile 
+and install the nearest neighbor search implementations. 
+The `--proc` flag specifies that the installation should use five processes in parallel.
 
-These are all as of 2020-07-12, running all benchmarks on a c5.4xlarge machine on AWS with `--parallelism` set to 3:
+```bash
+$ git clone https://github.com/maumueller/ann-benchmarks-reproducibility
+$ cd ann-benchmarks-reproducibility 
+$ pip3 install -rrequirements.txt
+$ python3 install.py --proc 5
+```
 
-glove-100-angular
------------------
+We note that these steps will work for more recent versions of Python, but the file `requirements.txt` has to be updated to contain recent versions of libraries. 
+At the time of writing this article, the most recent choices for each library worked well.
+At the end of running the installation script, the individual implementations will report on a successful or failed installation. 
+It is necessary that all installations succeeded before proceeding.
 
-![glove-100-angular](https://raw.github.com/erikbern/ann-benchmarks/master/results/glove-100-angular.png)
-
-sift-128-euclidean
-------------------
-
-![glove-100-angular](https://raw.github.com/erikbern/ann-benchmarks/master/results/sift-128-euclidean.png)
-
-fashion-mnist-784-euclidean
----------------------------
-
-![fashion-mnist-784-euclidean](https://raw.github.com/erikbern/ann-benchmarks/master/results/fashion-mnist-784-euclidean.png)
-
-lastfm-64-dot
-------------------
-
-![lastfm-64-dot](https://raw.github.com/erikbern/ann-benchmarks/master/results/lastfm-64-dot.png)
-
-nytimes-256-angular
--------------------
-
-![nytimes-256-angular](https://raw.github.com/erikbern/ann-benchmarks/master/results/nytimes-256-angular.png)
-
-glove-25-angular
-----------------
-
-![glove-25-angular](https://raw.github.com/erikbern/ann-benchmarks/master/results/glove-25-angular.png)
-
-Install
-=======
-
-The only prerequisite is Python (tested with 3.6) and Docker.
-
-1. Clone the repo.
-2. Run `pip install -r requirements.txt`.
-3. Run `python install.py` to build all the libraries inside Docker containers (this can take a while, like 10-30 minutes).
-
-Running
-=======
-
-1. Run `python run.py` (this can take an extremely long time, potentially days)
-2. Run `python plot.py` or `python create_website.py` to plot results.
-
-You can customize the algorithms and datasets if you want to:
-
-* Check that `algos.yaml` contains the parameter settings that you want to test
-* To run experiments on SIFT, invoke `python run.py --dataset glove-100-angular`. See `python run.py --help` for more information on possible settings. Note that experiments can take a long time. 
-* To process the results, either use `python plot.py --dataset glove-100-angular` or `python create_website.py`. An example call: `python create_website.py --plottype recall/time --latex --scatter --outputdir website/`. 
-
-Including your algorithm
-========================
-
-1. Add your algorithm into `ann_benchmarks/algorithms` by providing a small Python wrapper.
-2. Add a Dockerfile in `install/` for it
-3. Add it to `algos.yaml`
-4. Add it to `.travis.yml`
-
-Principles
-==========
-
-* Everyone is welcome to submit pull requests with tweaks and changes to how each library is being used.
-* In particular: if you are the author of any of these libraries, and you think the benchmark can be improved, consider making the improvement and submitting a pull request.
-* This is meant to be an ongoing project and represent the current state.
-* Make everything easy to replicate, including installing and preparing the datasets.
-* Try many different values of parameters for each library and ignore the points that are not on the precision-performance frontier.
-* High-dimensional datasets with approximately 100-1000 dimensions. This is challenging but also realistic. Not more than 1000 dimensions because those problems should probably be solved by doing dimensionality reduction separately.
-* Single queries are used by default. ANN-Benchmarks enforces that only one CPU is saturated during experimentation, i.e., no multi-threading. A batch mode is available that provides all queries to the implementations at once. Add the flag `--batch` to `run.py` and `plot.py` to enable batch mode. 
-* Avoid extremely costly index building (more than several hours).
-* Focus on datasets that fit in RAM. Out of core ANN could be the topic of a later comparison.
-* We mainly support CPU-based ANN algorithms. GPU support exists for FAISS, but it has to be compiled with GPU support locally and experiments must be run using the flags `--local --batch`. 
-* Do proper train/test set of index data and query points.
-* Note that set similarity was supported in the past. This might hopefully be added back soon.
+Running CPU-based experiments
+----------------------------
 
 
-Authors
-=======
+We are now ready to run all CPU-based experiments by running 
+```bash
+$ PY=python3 PARALLELISM=10 bash reproducibility/run_experiments.sh 
+```
 
-Built by [Erik Bernhardsson](https://erikbern.com) with significant contributions from [Martin Aumüller](http://itu.dk/people/maau/) and [Alexander Faithfull](https://github.com/ale-f).
+All individual runs of experiments in this part are carried out on a single CPU using Docker. The environmental variable `PARALLELISM` can be used to spawn multiple containers in parallel. For a 10-core machine, we suggest using a value of 5.
+The environmental variable `PY` can be used to point to a custom Python 3.6 installation, e.g., provided by Anaconda.
+Note that for the largest dataset `GIST-960-Euclidean`, around 20GB of RAM are necessary per process.
+The environmental variable `GISTPARALLELISM` controls the number of parallel instances run for the GIST dataset. Invoking 
 
-Related Publication
+```bash
+$ PY=python3 PARALLELISM=10 GISTPARALLELISM=3 bash reproducibility/run_experiments.sh 
+```
+corresponds to 3 parallel runs on GIST, and 10 on all other datasets. 
+A machine used for running this experiment should contain at least 64GB of RAM.
+On our test machine, reproducing all CPU based experiments with the parameters above took around 4 days.
+
+Running GPU-based experiments
+-----------------------------
+
+The paper <https://arxiv.org/abs/1807.05614> contains a single run of a GPU-based variant in Figure 12. 
+This run was carried out in a local environment outside a docker container.
+To reproduce this run, we provide a script in `reproducibility/run_gpu.sh`. 
+A Linux-based environment with a CUDA runtime of at least 10.0 is necessary.
+This can be checked by inspecting the output of `nvidia-smi`.
+Furthermore, the `nvidia-runtime` for docker must be installed, as detailed in <https://github.com/NVIDIA/nvidia-docker>.
+If these requirements are met, the GPU run is reproduced by running:
+
+```bash
+$ python3 install.py --algorithm faissgpu 
+$ bash reproducibility/run_gpu.sh
+```
+
+Our machine was equipped with a Quadro M4000 with compute engine 5.2 and all runs where finished within 10 minutes.
+If the reproducibility environment features an older GPU, the version of the compute engine must be manually set during compilation of FAISS in `install/Dockerfile.faissgpu` by editing the flag `DCMAKE_CUDA_ARCHITECTURES="75;72;52"`.
+
+Reproducing the Paper From The Results
+======================================
+
+If all runs above have been carried out, we can start reproducing the plots in the paper. 
+Run
+
+```bash
+$ sudo python3 data_export --out res.csv
+$ mkdir -p paper/result_tables/
+$ python3 reproducibility/create_result_tables.py res.csv paper/result_tables/
+```
+
+to create all the raw tables used by `pgfplots` during the final LateX compilation.
+Since exporting the results will compute all quality metrics, it took around 1 hour on our machine.
+(However, results are cached, so this cost applies only once.)
+Now, compile the paper by changing to the `paper` directory and compiling `paper.tex`, i.e., 
+
+```bash
+$ cd paper  && latexmk -pdf paper.tex
+```
+
+This requires a standard latex installation for scientific writing. 
+If such a system is not present, we provide another Docker container in `paper`. 
+The reproducibility steps are then 
+
+```bash
+$ docker build . -t ann-benchmarks-reproducibility-latex 
+$ docker run -it -v "$(pwd)"/:/app/:rw ann-benchmarks-reproducibility-latex:latest
+```
+
+from within the `paper` directory.
+The compilation will fail (or miss certain plot lines) if some runs did not finish in time. 
+The compilation log will contain the name of all runs that are missing, which allows to individually re-run some experiments, for example with longer timeouts.
+
+The final PDF can be seen in `paper/paper.pdf` and the plots can be compared to the original paper <https://arxiv.org/abs/1807.05614>.
+
+Reproduction from the original raw results
+==========================================
+
+To avoid rerunning all experiments, the raw result of the original runs can be accessed from the research artifacts <https://doi.org/10.5281/zenodo.4607761>.
+It is required to complete the installation steps first.
+Unpack the results into the `ann-benchmarks` folder, and run
+the same steps as above. 
+
+Related Publications
 ==================
 
 The following publication details design principles behind the benchmarking framework: 
 
 - M. Aumüller, E. Bernhardsson, A. Faithfull:
 [ANN-Benchmarks: A Benchmarking Tool for Approximate Nearest Neighbor Algorithms](https://arxiv.org/abs/1807.05614). Information Systems 2019. DOI: [10.1016/j.is.2019.02.006](https://doi.org/10.1016/j.is.2019.02.006)
+- M. Aumüller, E. Bernhardsson, A. Faithfull:
+[ANN-Benchmarks: A Benchmarking Tool for Approximate Nearest Neighbor Algorithms](). 
+- Research artifacts:  <https://doi.org/10.5281/zenodo.4607761>
