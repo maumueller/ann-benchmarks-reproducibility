@@ -16,14 +16,11 @@
             legend style = { at = { (0.6, 1.22 ) }},
             legend columns = 4,
             ]
-            \addplot [only marks,color=colorbrewer1] table {result_tables/scatter_glove-100-angular_10_annoy_k-nn_qps};
-            \addlegendentry{ A };
-            \addplot [only marks,color=colorbrewer2] table {result_tables/scatter_glove-100-angular_10_faiss-ivf_k-nn_qps};
-            \addlegendentry{ FAI-IVF };
-            \addplot [only marks,color=colorbrewer3] table {result_tables/scatter_glove-100-angular_10_hnsw(nmslib)_k-nn_qps};
-            \addlegendentry{HNSW};
-            \addplot [only marks,color=colorbrewer4] table {result_tables/scatter_glove-100-angular_10_SW-graph(nmslib)_k-nn_qps};
-            \addlegendentry{ SWG };
+%%PROCESS result_tables/scatter_glove-100-angular_10_annoy_k-nn_qps A [only marks,color=colorbrewer1]
+%%PROCESS result_tables/scatter_glove-100-angular_10_faiss-ivf_k-nn_qps FAI-IVF [only marks,color=colorbrewer2]
+%%PROCESS result_tables/scatter_glove-100-angular_10_hnsw(nmslib)_k-nn_qps HNSW [only marks,color=colorbrewer3]
+%%PROCESS result_tables/scatter_glove-100-angular_10_SW-graph(nmslib)_k-nn_qps SWG [only marks,color=colorbrewer4]
+
     \end{groupplot}
 \end{tikzpicture}
     \caption{Scatter plot of Recall-QPS (1/s) tradeoff - up and to the right is better on \textsf{GLOVE} with 10-NN. }

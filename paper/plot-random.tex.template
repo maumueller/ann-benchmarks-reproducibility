@@ -12,20 +12,13 @@
             legend style = { at = { (.95, 1.25 ) }},
             legend columns = 7
             ]
-            \addplot table {result_tables/random-10nn-euclidean_10_annoy_k-nn_qps};
-            \addlegendentry{A};
-            \addplot table {result_tables/random-10nn-euclidean_10_faiss-ivf_k-nn_qps};
-            \addlegendentry{FAI-IVF};
-            \addplot table {result_tables/random-10nn-euclidean_10_hnsw(nmslib)_k-nn_qps};
-            \addlegendentry{HNSW};
-            \addplot table {result_tables/random-10nn-euclidean_10_NGT-onng_k-nn_qps};
-            \addlegendentry{ONNG};
-            \addplot table {result_tables/random-10nn-euclidean_10_pynndescent_k-nn_qps};
-            \addlegendentry{NND};
-            \addplot table {result_tables/random-10nn-euclidean_10_kgraph_k-nn_qps};
-            \addlegendentry{KGraph};
-            \addplot table {result_tables/random-10nn-euclidean_10_SW-graph(nmslib)_k-nn_qps};
-            \addlegendentry{ SWG};
+%%PROCESS result_tables/random-10nn-euclidean_10_annoy_k-nn_qps A
+%%PROCESS result_tables/random-10nn-euclidean_10_faiss-ivf_k-nn_qps FAI-IVF
+%%PROCESS result_tables/random-10nn-euclidean_10_hnsw(nmslib)_k-nn_qps HNSW
+%%PROCESS result_tables/random-10nn-euclidean_10_NGT-onng_k-nn_qps ONNG
+%%PROCESS result_tables/random-10nn-euclidean_10_pynndescent_k-nn_qps NND
+%%PROCESS result_tables/random-10nn-euclidean_10_kgraph_k-nn_qps KGraph
+%%PROCESS result_tables/random-10nn-euclidean_10_SW-graph(nmslib)_k-nn_qps SWG
     \end{groupplot}
 \end{tikzpicture}
     \caption{Recall-QPS (1/s) tradeoff - up and to the right is better; \textsf{Rand-Euclidean} with 10-NN.}

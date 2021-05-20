@@ -90,11 +90,14 @@ Run
 $ sudo python3 data_export --out res.csv
 $ mkdir -p paper/result_tables/
 $ python3 reproducibility/create_result_tables.py res.csv paper/result_tables/
+$ python3 reproducibility/generate_and_verify_plots.py
 ```
 
 to create all the raw tables used by `pgfplots` during the final LateX compilation.
 Since exporting the results will compute all quality metrics, it took around 1 hour on our machine.
 (However, results are cached, so this cost applies only once.)
+The script `generate_and_verify_plots.py` will generate the plot tex files necessary to compile the document.
+It will also list missing data points, e.g., because the computation timed out, a too old CPU architecture was used, or no GPU was present.
 Now, compile the paper by changing to the `paper` directory and compiling `paper.tex`, i.e., 
 
 ```bash

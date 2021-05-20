@@ -15,27 +15,24 @@
             yticklabel style={/pgf/number format/fixed,
                               /pgf/number format/precision=3},
             ]
-            \addplot table {result_tables/gist-960-euclidean_100_annoy_k-nn_qps};
-        %\addlegendentry{Annoy};
+      %%PROCESS result_tables/gist-960-euclidean_100_annoy_k-nn_qps 
             
-        \addplot table {result_tables/gist-960-euclidean_100_faiss-ivf_k-nn_qps};
-
+%%PROCESS result_tables/gist-960-euclidean_100_faiss-ivf_k-nn_qps
         %\addlegendentry{faiss-ivf};
             
             
-        \addplot table {result_tables/gist-960-euclidean_100_hnsw(nmslib)_k-nn_qps};
-          
+%%PROCESS result_tables/gist-960-euclidean_100_hnsw(nmslib)_k-nn_qps
+
         %\addlegendentry{hnsw};
-        \addplot table {result_tables/gist-960-euclidean_100_mrpt_k-nn_qps};
-    
+%%PROCESS result_tables/gist-960-euclidean_100_mrpt_k-nn_qps
+
             %\addlegendentry{ mrpt };
-            \addplot table {result_tables/gist-960-euclidean_100_pynndescent_k-nn_qps};
- 
+%%PROCESS result_tables/gist-960-euclidean_100_pynndescent_k-nn_qps
+
             %\addlegendentry{ pynndescent };
 
 
-   \addplot table {result_tables/gist-960-euclidean_100_SW-graph(nmslib)_k-nn_qps};
-
+%%PROCESS result_tables/gist-960-euclidean_100_SW-graph(nmslib)_k-nn_qps
         %\addlegendentry{SW-graph};
             
         \nextgroupplot[
@@ -51,24 +48,24 @@
             yticklabel style={/pgf/number format/fixed,
                               /pgf/number format/precision=3}
             ]
-            \addplot table {result_tables/gist-960-euclidean_100_annoy_epsilon_qps};
+           %%PROCESS result_tables/gist-960-euclidean_100_annoy_epsilon_qps
         %\addlegendentry{annoy};
             
             
-            \addplot table {result_tables/gist-960-euclidean_100_faiss-ivf_epsilon_qps};
+           %%PROCESS result_tables/gist-960-euclidean_100_faiss-ivf_epsilon_qps
 		%\addlegendentry{faiss-ivf}    
             
-            \addplot table {result_tables/gist-960-euclidean_100_hnsw(nmslib)_epsilon_qps};
+           %%PROCESS result_tables/gist-960-euclidean_100_hnsw(nmslib)_epsilon_qps
         %\addlegendentry{hnsw};
             
             
-            \addplot table {result_tables/gist-960-euclidean_100_mrpt_epsilon_qps};
+           %%PROCESS result_tables/gist-960-euclidean_100_mrpt_epsilon_qps
             %\addlegendentry{ mrpt };
 
-            \addplot table {result_tables/gist-960-euclidean_100_pynndescent_epsilon_qps};
+           %%PROCESS result_tables/gist-960-euclidean_100_pynndescent_epsilon_qps
             %\addlegendentry{ pynndescent };
             
-            \addplot table {result_tables/gist-960-euclidean_100_SW-graph(nmslib)_epsilon_qps};
+           %%PROCESS result_tables/gist-960-euclidean_100_SW-graph(nmslib)_epsilon_qps
             %\addlegendentry{SW-graph};
         \nextgroupplot[
             xlabel={Recall},
@@ -86,24 +83,17 @@
             legend columns = 9
             ]
 
-            \addplot table {result_tables/gist-960-euclidean_100_annoy_largeepsilon_qps};
-            \addlegendentry{A};
+%%PROCESS result_tables/gist-960-euclidean_100_annoy_largeepsilon_qps A
            
-            \addplot table {result_tables/gist-960-euclidean_100_faiss-ivf_largeepsilon_qps};
-            
-            \addlegendentry{FAI-IVF}
-            \addplot table {result_tables/gist-960-euclidean_100_hnsw(nmslib)_largeepsilon_qps};
-            
-            \addlegendentry{HNSW};
-            \addplot table {result_tables/gist-960-euclidean_100_mrpt_largeepsilon_qps};
-            
-            \addlegendentry{MRPT};
-            \addplot table {result_tables/gist-960-euclidean_100_pynndescent_largeepsilon_qps};
+            %%PROCESS result_tables/gist-960-euclidean_100_faiss-ivf_largeepsilon_qps FAI-IVF
 
-            \addlegendentry{NND};
-            \addplot table {result_tables/gist-960-euclidean_100_SW-graph(nmslib)_largeepsilon_qps};
+            %%PROCESS result_tables/gist-960-euclidean_100_hnsw(nmslib)_largeepsilon_qps HNSW
 
-            \addlegendentry{SWG};
+            %%PROCESS result_tables/gist-960-euclidean_100_mrpt_largeepsilon_qps MRPT
+
+           %%PROCESS result_tables/gist-960-euclidean_100_pynndescent_largeepsilon_qps NND
+
+            %%PROCESS result_tables/gist-960-euclidean_100_SW-graph(nmslib)_largeepsilon_qps SWG
     \end{groupplot}
 \end{tikzpicture}
     \caption{(Approximate) Recall-QPS (1/s) tradeoff - up and to the right is better,

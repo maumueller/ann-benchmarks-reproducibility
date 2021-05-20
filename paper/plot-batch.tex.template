@@ -12,16 +12,11 @@
             legend style = { at = { (1, 1.25 ) }},
             legend columns = 5
             ]
-            \addplot table {result_tables/sift-128-euclidean_10_faiss-ivf-gpu-batch_k-nn_qps};
-            \addlegendentry{ FAI-IVF-GPU };
-            \addplot table {result_tables/sift-128-euclidean_10_faiss-gpu-bf-batch_k-nn_qps};
-            \addlegendentry{ FAI-GPU-BF };
-            \addplot table {result_tables/sift-128-euclidean_10_faiss-ivf-batch_k-nn_qps};
-            \addlegendentry{ FAI-IVF-CPU} ;
-            \addplot table {result_tables/sift-128-euclidean_10_hnsw(nmslib)-batch_k-nn_qps};
-            \addlegendentry{ HNSW (B)};
-            \addplot table {result_tables/sift-128-euclidean_10_hnsw(nmslib)_k-nn_qps};
-            \addlegendentry{ HNSW (NB)};
+%%PROCESS result_tables/sift-128-euclidean_10_faiss-ivf-gpu-batch_k-nn_qps FAI-IVF-GPU 
+%%PROCESS result_tables/sift-128-euclidean_10_faiss-gpu-bf-batch_k-nn_qps FAI-GPU-BF 
+%%PROCESS result_tables/sift-128-euclidean_10_faiss-ivf-batch_k-nn_qps FAI-IVF-CPU
+%%PROCESS result_tables/sift-128-euclidean_10_hnsw(nmslib)-batch_k-nn_qps HNSW (B)
+%%PROCESS result_tables/sift-128-euclidean_10_hnsw(nmslib)_k-nn_qps HNSW (NB)
     \end{groupplot}
 \end{tikzpicture}
     \caption{Recall-QPS (1/s) tradeoff - up and to the right is better. Algorithms running 

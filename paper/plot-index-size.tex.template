@@ -1,0 +1,63 @@
+%\begin{figure}[h!]
+    %\hspace{-4em}
+%\selectcolormodel{gray}    
+    \begin{tikzpicture}[every mark/.append style={mark size=1.5pt}]
+        \begin{groupplot}[group style = {group size = 2 by 1, group name = hamming, horizontal sep = 0.5em}, height=6cm, width=.583\textwidth,grid = both, grid style={line width=.1pt, draw=gray!30},
+    major grid style={line width=.2pt,draw=gray!50},
+            xtick = {0, 0.25, 0.5, 0.75, 1},   ylabel style = {yshift=-1.5ex}, xlabel style = {yshift=1.5ex}, ymin = 10, ymax = 1e5, max space between ticks = 20 ]]
+        \nextgroupplot[
+            xlabel={Recall},      
+            ylabel={Index size/QPS},
+            ymode = log,
+            ylabel style = {overlay},
+			%width=\textwidth,
+	        %height=5cm,
+            yticklabel style={/pgf/number format/fixed,
+                              /pgf/number format/precision=3},
+            ]
+       %%PROCESS result_tables/sift-128-euclidean_100_annoy_k-nn_queriessize
+        %\addlegendentry{annoy};
+       %%PROCESS result_tables/sift-128-euclidean_100_BallTree(nmslib)_k-nn_queriessize
+        %\addlegendentry{BallTree};
+
+       %%PROCESS result_tables/sift-128-euclidean_100_faiss-ivf_k-nn_queriessize 
+       %%PROCESS result_tables/sift-128-euclidean_100_flann_k-nn_queriessize
+        %\addlegendentry{flann};
+       %%PROCESS result_tables/sift-128-euclidean_100_hnsw(nmslib)_k-nn_queriessize
+        %\addlegendentry{hnsw};
+       %%PROCESS result_tables/sift-128-euclidean_100_kgraph_k-nn_queriessize
+        %\addlegendentry{kgraph};
+       %%PROCESS result_tables/sift-128-euclidean_100_NGT-onng_k-nn_queriessize
+        %\addlegendentry{ NGT-panng };
+       %%PROCESS result_tables/sift-128-euclidean_100_pynndescent_k-nn_queriessize
+        %\addlegendentry{ pynndescent };
+       %%PROCESS result_tables/sift-128-euclidean_100_SW-graph(nmslib)_k-nn_queriessize
+        %\addlegendentry{SW-graph};
+            
+        \nextgroupplot[
+            xlabel={Recall},
+            ymode = log,
+			%width=\textwidth,
+	        %height=5cm,
+            yticklabel style={/pgf/number format/fixed,
+                              /pgf/number format/precision=3},
+            yticklabels = {,,},
+              legend style = {at = {(1, 1.3)}},
+              legend columns = 9
+            ]
+%%PROCESS result_tables/glove-100-angular_10_annoy_k-nn_queriessize A
+%%PROCESS result_tables/glove-100-angular_10_BallTree(nmslib)_k-nn_queriessize BT
+%%PROCESS result_tables/glove-100-angular_10_faiss-ivf_k-nn_queriessize FAI-IVF
+%%PROCESS result_tables/glove-100-angular_10_flann_k-nn_queriessize FLANN
+%%PROCESS result_tables/glove-100-angular_10_hnsw(nmslib)_k-nn_queriessize HNSW
+%%PROCESS result_tables/glove-100-angular_10_kgraph_k-nn_queriessize KG
+%%PROCESS result_tables/glove-100-angular_10_NGT-onng_k-nn_queriessize ONNG
+%%PROCESS result_tables/glove-100-angular_10_pynndescent_k-nn_queriessize NND
+%%PROCESS result_tables/glove-100-angular_10_SW-graph(nmslib)_k-nn_queriessize SWG
+    \end{groupplot} 
+    \end{tikzpicture}
+    \caption{Recall-Index size (kB)/QPS (s) tradeoff - down and to the right is better. Left: 
+    \textsf{SIFT} ($k$=100), right: \textsf{GLOVE} ($k$=10).}
+    \label{plot:index:size}
+%\end{figure}
+    

@@ -14,19 +14,19 @@
             yticklabel style={/pgf/number format/fixed,
                               /pgf/number format/precision=3},
             ]
-            \addplot table {result_tables/annoy_gist-960-euclidean_10_k-nn_qps};
+           %%PROCESS result_tables/annoy_gist-960-euclidean_10_k-nn_qps
             %\addlegendentry{gist}
-            \addplot table {result_tables/annoy_glove-100-angular_10_k-nn_qps};
+%%PROCESS result_tables/annoy_glove-100-angular_10_k-nn_qps
             %\addlegendentry{glove};
-            \addplot table {result_tables/annoy_glove-100-angular_100_k-nn_qps};
+%%PROCESS result_tables/annoy_glove-100-angular_100_k-nn_qps
             %\addlegendentry{glove (k = 100)};
             
-            \addplot table {result_tables/annoy_nytimes-256-angular_10_k-nn_qps};
+%%PROCESS result_tables/annoy_nytimes-256-angular_10_k-nn_qps
             %\addlegendentry{nytimes};
             
-            \addplot table {result_tables/annoy_random-10nn-euclidean_10_k-nn_qps};
+%%PROCESS result_tables/annoy_random-10nn-euclidean_10_k-nn_qps
             %\addlegendentry{rand-angular};
-            \addplot table {result_tables/annoy_sift-128-euclidean_10_k-nn_qps};
+%%PROCESS result_tables/annoy_sift-128-euclidean_10_k-nn_qps
             %\addlegendentry{sift};
             
             
@@ -47,19 +47,19 @@
             %    anchor = center,
             %}
             ]
-            \addplot table {result_tables/faiss-ivf_gist-960-euclidean_10_k-nn_qps};
+           %%PROCESS result_tables/faiss-ivf_gist-960-euclidean_10_k-nn_qps
             %\addlegendentry{gist}
-            \addplot table {result_tables/faiss-ivf_glove-100-angular_10_k-nn_qps};
+%%PROCESS result_tables/faiss-ivf_glove-100-angular_10_k-nn_qps
             %\addlegendentry{glove};
-            \addplot table {result_tables/faiss-ivf_glove-100-angular_100_k-nn_qps};
+%%PROCESS result_tables/faiss-ivf_glove-100-angular_100_k-nn_qps
             %\addlegendentry{glove (k = 100)};
             
-            \addplot table {result_tables/faiss-ivf_nytimes-256-angular_10_k-nn_qps};
+%%PROCESS result_tables/faiss-ivf_nytimes-256-angular_10_k-nn_qps
             %\addlegendentry{nytimes};
             
-            \addplot table {result_tables/faiss-ivf_random-10nn-euclidean_10_k-nn_qps};
+%%PROCESS result_tables/faiss-ivf_random-10nn-euclidean_10_k-nn_qps
             %\addlegendentry{rand-angular};
-            \addplot table {result_tables/faiss-ivf_sift-128-euclidean_10_k-nn_qps};
+%%PROCESS result_tables/faiss-ivf_sift-128-euclidean_10_k-nn_qps
             %\addlegendentry{sift};
         \nextgroupplot[
             xlabel={Recall},
@@ -73,20 +73,12 @@
             legend style = {at = {(1, 1.3)}},
             legend columns = 6
             ]
-            \addplot table {result_tables/hnsw(nmslib)_gist-960-euclidean_10_k-nn_qps};
-            \addlegendentry{GIST}
-            \addplot table {result_tables/hnsw(nmslib)_glove-100-angular_10_k-nn_qps};
-            \addlegendentry{GLOVE};
-            \addplot table {result_tables/hnsw(nmslib)_glove-100-angular_100_k-nn_qps};
-            \addlegendentry{GLOVE (k = 100)};
-            
-            \addplot table {result_tables/hnsw(nmslib)_nytimes-256-angular_10_k-nn_qps};
-            \addlegendentry{NYTimes};
-            
-            \addplot table {result_tables/hnsw(nmslib)_random-10nn-euclidean_10_k-nn_qps};
-            \addlegendentry{Rand-Euclidean};
-            \addplot table {result_tables/hnsw(nmslib)_sift-128-euclidean_10_k-nn_qps};
-            \addlegendentry{SIFT};
+%%PROCESS result_tables/hnsw(nmslib)_gist-960-euclidean_10_k-nn_qps GIST
+%%PROCESS result_tables/hnsw(nmslib)_glove-100-angular_10_k-nn_qps GLOVE
+%%PROCESS result_tables/hnsw(nmslib)_glove-100-angular_100_k-nn_qps GLOVE (k = 100)
+%%PROCESS result_tables/hnsw(nmslib)_nytimes-256-angular_10_k-nn_qps NYTimes
+%%PROCESS result_tables/hnsw(nmslib)_random-10nn-euclidean_10_k-nn_qps Rand-Euclidean
+%%PROCESS result_tables/hnsw(nmslib)_sift-128-euclidean_10_k-nn_qps SIFT
     \end{groupplot}
 \end{tikzpicture}
     \caption{Recall-QPS (1/s) tradeoff - up and to the right is better, 10-nearest neighbors unless otherwise stated, 

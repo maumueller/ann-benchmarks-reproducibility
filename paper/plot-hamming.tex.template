@@ -18,23 +18,18 @@
             legend columns = 7
             ]
     
-        \addplot table {result_tables/sift-256-hamming_10_annoy-euclidean_k-nn_qps};
-        \addlegendentry{A};
-        \addplot table {result_tables/sift-256-hamming_10_annoy_k-nn_qps};
-        \addlegendentry{A (Ham.)};
+    %%PROCESS result_tables/sift-256-hamming_10_annoy-euclidean_k-nn_qps A
+%%PROCESS result_tables/sift-256-hamming_10_annoy_k-nn_qps A (Ham.)
 
-        \addplot table {result_tables/sift-256-hamming_10_faiss-ivf_k-nn_qps};
-        \addlegendentry{FAI-IVF};
+%%PROCESS result_tables/sift-256-hamming_10_faiss-ivf_k-nn_qps FAI-IVF
 
 
-        \addplot table {result_tables/sift-256-hamming_10_NGT-panng_k-nn_qps};
-        \addlegendentry{PANNG}; 
+%%PROCESS result_tables/sift-256-hamming_10_NGT-panng_k-nn_qps PANNG
 
         \addplot[mark=*, mark size=4, smooth] table {result_tables/sift-256-hamming_10_mih_k-nn_qps};
         \addlegendentry{MIH};
- 
-        \addplot table {result_tables/sift-128-euclidean_10_annoy_k-nn_qps};
-        \addlegendentry{A (Eucl.)}
+
+        %%PROCESS result_tables/sift-128-euclidean_10_annoy_k-nn_qps A (Eucl.)
 
         \nextgroupplot[
             xlabel={Recall},
@@ -43,16 +38,15 @@
             yticklabel style={/pgf/number format/fixed,
                               /pgf/number format/precision=3},
             ]
-        \addplot table {result_tables/word2bits-800-hamming_10_annoy-euclidean_k-nn_qps};
-
+%%PROCESS result_tables/word2bits-800-hamming_10_annoy-euclidean_k-nn_qps
  %       \addlegendentry{A};
-        \addplot table {result_tables/word2bits-800-hamming_10_annoy_k-nn_qps};
+       %%PROCESS result_tables/word2bits-800-hamming_10_annoy_k-nn_qps
 %        \addlegendentry{A (Ham.)};
             
-        \addplot table {result_tables/word2bits-800-hamming_10_faiss-ivf_k-nn_qps};
+       %%PROCESS result_tables/word2bits-800-hamming_10_faiss-ivf_k-nn_qps
 %        \addlegendentry{FAI-IVF};
             
-        \addplot table {result_tables/word2bits-800-hamming_10_NGT-panng_k-nn_qps};
+       %%PROCESS result_tables/word2bits-800-hamming_10_NGT-panng_k-nn_qps
  %       \addlegendentry{PANNG}; 
 
         \addplot[mark=*,mark size=4, smooth]  table {result_tables/word2bits-800-hamming_10_mih_k-nn_qps};
