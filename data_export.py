@@ -6,8 +6,6 @@ mpl.use('Agg')
 import matplotlib.pyplot as plt
 import argparse
 import bz2
-import pyarrow as pa
-import pyarrow.parquet as pq
 
 from ann_benchmarks.datasets import get_dataset
 from ann_benchmarks.algorithms.definitions import get_definitions
