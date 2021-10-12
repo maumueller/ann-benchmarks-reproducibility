@@ -45,6 +45,7 @@ def run_worker(cpu, args, queue):
             if args.batch:
                 cpu_limit = "0-%d" % (multiprocessing.cpu_count() - 1)
 
+            print("\t\tRunning %s with build=%s and query=%s | %d experiments left" % (definition.algorithm, definition.arguments, definition.query_argument_groups, queue.qsize()))
             run_docker(definition, args.dataset, args.count,
                        args.runs, args.timeout, args.batch, cpu_limit, mem_limit)
 
@@ -236,6 +237,8 @@ def main():
         raise Exception('Nothing to run')
     else:
         logger.info(f'Order: {definitions}')
+
+    print("\tRunning %d experiments on %s (k=%d)" % (len(definitions), args.dataset, args.count))
 
     if args.parallelism > multiprocessing.cpu_count() - 1:
         raise Exception('Parallelism larger than %d! (CPU count minus one)' % (multiprocessing.cpu_count() - 1))
