@@ -5,6 +5,9 @@ GIST_PARALLEL=${GISTPARALLELISM:=$PARALLEL}
 # K=10 runs
 ALGODEF=reproducibility/standard_runs.yaml
 
+start=`date +%m`
+echo Started experiments at `date`
+
 mkdir -p logs
 
 for ds in glove-100-angular sift-128-euclidean random-10nn-euclidean nytimes-256-angular; do
@@ -42,6 +45,10 @@ ALGODEF=reproducibility/batch_runs.yaml
 $PYTHON run.py --dataset sift-128-euclidean --definition $ALGODEF --batch --count 10
 cp annb.log logs/sift-128-euclidean-batch_10.log
 
+end=`date +%m`
+echo Finished experiments at `date`
+
+echo Spend $((end- start))m reproducing the experiments.
 
 
 
