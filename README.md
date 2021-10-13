@@ -1,5 +1,4 @@
-Reproducibility Repository for ANN-Benchmarks: A benchmarking tool for approximate nearest neighbor search algorithms
-==================
+# Reproducibility Repository for ANN-Benchmarks: A benchmarking tool for approximate nearest neighbor search algorithms
 
 This repository contains code to reproduce the experiments in 
 
@@ -7,50 +6,76 @@ This repository contains code to reproduce the experiments in
 
 See <https://github.com/erikbern/ann-benchmarks> for the most recent state-of-art in nearest neighbor search.
 
-Reproduction
-=============
+## Reproduction
 
-Installation
-------------
+We provide here a detailed step-by-step discussion with explanations.
+A summary of the different steps can be found in the bottom.
+
+### Installation
+
+#### Setting up a VM using Vagrant
 
 We provide a `Vagrantfile` in the [research artifacts](https://doi.org/10.5281/zenodo.4607761)  that automatically sets up a VM ready to carry out the experiments.
+See  <https://www.vagrantup.com/docs/installation> for how to install Vagrant using Virtualbox.
 
-To reproduce all steps, start from a fresh installation of Ubuntu 18.04. Next, install Docker as outlined on
+Download the file and put it into a new directory. 
+Edit `Vagrantfile` on line 51 and 52 to set up how many cpu cores and memory should be exposed to the VM.
+
+Next, carry out the following steps:
+
+```bash
+vagrant up # sets up the vm
+vagrant ssh  # connects to the machine
+sudo chown -R vagrant:vagrant ann-benchmarks-reproducibility
+cd ann-benchmarks-reproducibility
+```
+
+Note that this setup does not allow to reproduce the (few) GPU runs mentioned in the paper, as detailed below.
+
+#### Starting from an existing Linux environment
+
+If the reproducibility framework is run in an existing linux installation,
+we require that Python 3.6 or 3.8 and docker are installed. 
+An installation guide for Docker can be found at 
 <https://docs.docker.com/engine/install/ubuntu/>.
-Then, install Python 3.6 as follows:
+To make sure that the user can spawn Docker containers, make sure to follow the guides at <https://docs.docker.com/engine/install/linux-postinstall/>.
+For Ubuntu installations, this means that the user has to carry out the following command ` sudo usermod -aG docker $USER` and log into the shell again.
+
+For the Python installation, in an Ubuntu 18.04 setup, Python 3.6 can be installed as follows:
 
 ```bash
 $ sudo apt-get update 
 $ sudo apt-get install -y python3-pip build-essential git
 ```
 
-Finally, clone the repository and install necessary dependencies and compile 
+Next, clone the repository and install necessary dependencies and compile 
 and install the nearest neighbor search implementations. 
 The `--proc` flag specifies that the installation should use five processes in parallel.
 
 ```bash
 $ git clone https://github.com/maumueller/ann-benchmarks-reproducibility
 $ cd ann-benchmarks-reproducibility 
-$ pip3 install -rrequirements.txt
+$ pip3 install -r requirements_36.txt # use requirements_38.txt for Python 3.8
 $ python3 install.py --proc 5
 ```
 
-We note that these steps will work for more recent versions of Python, but the file `requirements.txt` has to be updated to contain recent versions of libraries. 
-At the time of writing this article, the most recent choices for each library worked well.
+For more recent versions of Python, the files `requirements.txt` has to be updated to contain recent versions of libraries. 
+At the time of writing this article, the most recent choices for each library worked well for Python 3.9.
 At the end of running the installation script, the individual implementations will report on a successful or failed installation. 
 It is necessary that all installations succeeded before proceeding.
 
 Running CPU-based experiments
 ----------------------------
 
+After setting up the Vagrant VM or finishing the installation in the local environment, we proceed to running the experiments.
 
-We are now ready to run all CPU-based experiments by running 
+Starting in the direction `ann-benchmarks-reproducibility`, we invoke all CPU-based experiments by running 
 ```bash
 $ PY=python3 PARALLELISM=10 bash reproducibility/run_experiments.sh 
 ```
 
-All individual runs of experiments in this part are carried out on a single CPU using Docker. The environmental variable `PARALLELISM` can be used to spawn multiple containers in parallel. For a 10-core machine, we suggest using a value of 5.
-The environmental variable `PY` can be used to point to a custom Python 3.6 installation, e.g., provided by Anaconda.
+All individual runs of experiments in this part are carried out on a single CPU core using Docker. The environmental variable `PARALLELISM` can be used to spawn multiple containers in parallel. For a 10-core machine, we suggest using a value of 5.
+The environmental variable `PY` can be used to point to a custom Python installation, e.g., provided by Anaconda.
 Note that for the largest dataset `GIST-960-Euclidean`, around 20GB of RAM are necessary per process.
 The environmental variable `GISTPARALLELISM` controls the number of parallel instances run for the GIST dataset. Invoking 
 
@@ -77,8 +102,9 @@ $ python3 install.py --algorithm faissgpu
 $ bash reproducibility/run_gpu.sh
 ```
 
-Our machine was equipped with a Quadro M4000 with compute engine 5.2 and all runs where finished within 10 minutes.
+Our machine was equipped with a Quadro M4000 with compute engine 5.2 and all runs were finished within 10 minutes.
 If the reproducibility environment features an older GPU, the version of the compute engine must be manually set during compilation of FAISS in `install/Dockerfile.faissgpu` by editing the flag `DCMAKE_CUDA_ARCHITECTURES="75;72;52"`.
+
 
 Reproducing the Paper From The Results
 ======================================
