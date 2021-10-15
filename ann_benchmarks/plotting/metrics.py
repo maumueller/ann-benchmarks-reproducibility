@@ -27,7 +27,6 @@ def get_recall_values(dataset_distances, run_distances, count, threshold,
 
 def knn(dataset_distances, run_distances, count, metrics, epsilon=1e-3):
     if 'knn' not in metrics:
-        print('Computing knn metrics')
         knn_metrics = metrics.create_group('knn')
         mean, std, recalls = get_recall_values(dataset_distances,
                                                run_distances, count,
@@ -35,15 +34,12 @@ def knn(dataset_distances, run_distances, count, metrics, epsilon=1e-3):
         knn_metrics.attrs['mean'] = mean
         knn_metrics.attrs['std'] = std
         knn_metrics['recalls'] = recalls
-    else:
-        print("Found cached result")
     return metrics['knn']
 
 
 def epsilon(dataset_distances, run_distances, count, metrics, epsilon=0.01):
     s = 'eps' + str(epsilon)
     if s not in metrics:
-        print('Computing epsilon metrics')
         epsilon_metrics = metrics.create_group(s)
         mean, std, recalls = get_recall_values(dataset_distances,
                                                run_distances, count,
@@ -51,14 +47,11 @@ def epsilon(dataset_distances, run_distances, count, metrics, epsilon=0.01):
         epsilon_metrics.attrs['mean'] = mean
         epsilon_metrics.attrs['std'] = std
         epsilon_metrics['recalls'] = recalls
-    else:
-        print("Found cached result")
     return metrics[s]
 
 
 def rel(dataset_distances, run_distances, metrics):
     if 'rel' not in metrics.attrs:
-        print('Computing rel metrics')
         total_closest_distance = 0.0
         total_candidate_distance = 0.0
         for true_distances, found_distances in zip(dataset_distances,
@@ -71,8 +64,6 @@ def rel(dataset_distances, run_distances, metrics):
         else:
             metrics.attrs['rel'] = total_candidate_distance / \
                 total_closest_distance
-    else:
-        print("Found cached result")
     return metrics.attrs['rel']
 
 

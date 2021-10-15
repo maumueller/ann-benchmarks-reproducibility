@@ -74,7 +74,7 @@ def compute_metrics_all_runs(dataset, res, recompute=False):
         run_distances = numpy.array(run['distances'])
         # print('... done')
         if recompute and 'metrics' in run:
-            print('Recomputing metrics, clearing cache')
+            #print('Recomputing metrics, clearing cache')
             del run['metrics']
         metrics_cache = get_or_create_metrics(run)
 

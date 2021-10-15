@@ -61,15 +61,24 @@ if __name__ == "__main__":
 
     is_first = True
     pqwriter = None
+
+    res = load_all_results()
+    res_cnt = len(list(res))
+    print("Found %d results, computing quality measures. This might take a while." % res_cnt)
+    cnt = 0
+
     for dataset_name in datasets:
         for count in [10, 100]:
             for batch in [False, True]:
-                print("Looking at dataset", dataset_name)
+                #print("Loading results for dataset ", dataset_name, " with k=", count, " and batch=", batch, sep='')
                 dataset = get_dataset(dataset_name)
                 unique_algorithms = get_unique_algorithms()
                 results = load_all_results(dataset_name, count, batch)
                 results = compute_metrics_all_runs(dataset, results, args.recompute)
-                dfs.append(pd.DataFrame(results))
+                df = pd.DataFrame(results)
+                dfs.append(df)
+                cnt += len(df)
+                print("Inspected %d/%d results." % (cnt, res_cnt), end='\r')
     if len(dfs) > 0:
         data = pd.concat(dfs)
         data.to_csv(args.output, index=False)
