@@ -11,6 +11,8 @@ COPY requirements_py38.txt ./
 # conda doesn't like some of our packages, use pip 
 RUN python3 -m pip install -r requirements_py38.txt 
 
+ENV LD_PRELOAD /root/anaconda3/lib/libmkl_core.so:/root/anaconda3/lib/libmkl_sequential.so # was necessary in vagrant, https://developpaper.com/a-pit-of-mkl-library-in-linux-anaconda/
+
 RUN python3 -c 'import faiss; print(faiss.IndexFlatL2)'
 
 
