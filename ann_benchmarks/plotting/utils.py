@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 import itertools
 import numpy
+import os
 from ann_benchmarks.plotting.metrics import all_metrics as metrics
 
 
@@ -92,6 +93,7 @@ def compute_metrics_all_runs(dataset, res, recompute=False):
             'dataset': dataset,
             'count': properties['count'],
             'batch': properties['batch_mode'],
+            'filename': os.path.split(run.filename)[1],
         }
         for name, metric in metrics.items():
             v = metric["function"](true_nn_distances, run_distances, metrics_cache, properties)
