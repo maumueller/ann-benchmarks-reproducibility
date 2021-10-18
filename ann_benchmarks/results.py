@@ -26,7 +26,7 @@ def get_result_filename(dataset=None, count=None, definition=None,
 def store_results(dataset, count, definition, query_arguments, attrs, results,
                   batch):
     fn = get_result_filename(
-        dataset, count, definition, query_arguments, batch) + '.hdf5'
+        dataset, count, definition, query_arguments, batch) 
     head, tail = os.path.split(fn)
     if not os.path.isdir(head):
         os.makedirs(head)
