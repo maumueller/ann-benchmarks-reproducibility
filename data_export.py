@@ -64,7 +64,7 @@ if __name__ == "__main__":
 
     res = load_all_results()
     res_cnt = len(list(res))
-    print("Found %d results, computing quality measures. This might take a while." % res_cnt)
+    print("Found %d results, computing quality measures. This will take around %d minutes to process." % (res_cnt, res_cnt * 1.8 / 60))
     cnt = 0
 
     for dataset_name in datasets:
