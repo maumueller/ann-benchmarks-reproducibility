@@ -13,7 +13,7 @@ for fn in fns:
                 if "%%PROCESS" not in line:
                     g.write(line)
                 else:
-                    line = line.strip()[10:] 
+                    line = line.strip()[10:]
                     label, attributes = None, None
                     if "[" in line:
                         other, attributes = line.split("[")
@@ -36,11 +36,24 @@ for fn in fns:
                     else:
                         missing.append(gn)
 
-print("Done processing all files. %d files were missing" % len(missing))
+print("Done processing all files. %d files were missing." % len(missing))
 
 if len(missing) > 0:
-    print("The following files were missing:")
-    print("\n".join(missing))
-                
-#\addplot table {result_tables/sift-128-euclidean_10_faiss-ivf-gpu-batch_k-nn_qps};
-#\addlegendentry{ FAI-IVF-GPU };
+
+    missing_exps = set()
+    for fn in missing:
+        res = fn.split("/")[-1].split("_")
+        if len(res) == 5:
+            ds, count, algo, _, _ = fn.split("/")[-1].split("_")
+            if not algo.isdigit():
+                missing_exps.add((ds, algo, count))
+
+    print("The following experiments have missing results:")
+    for ds, algo, count in sorted(missing_exps, key=lambda x:x[1]):
+            - hamming, reproducibility/hamming_runs.yaml
+            - nytimes, reproducibility/nytimes_runs.yaml
+            - otherwise, reproducibility/standard_runs.yaml""")
+    print("The paper will be missing plots that are associated with these experiments.")
+
+
+
