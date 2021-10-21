@@ -40,16 +40,19 @@ print("Done processing all files. %d files were missing." % len(missing))
 
 if len(missing) > 0:
 
+    print(missing)
     missing_exps = set()
     for fn in missing:
         res = fn.split("/")[-1].split("_")
         if len(res) == 5:
-            ds, count, algo, _, _ = fn.split("/")[-1].split("_")
+            ds, count, algo, _, _ = res
             if not algo.isdigit():
                 missing_exps.add((ds, algo, count))
 
     print("The following experiments have missing results:")
     for ds, algo, count in sorted(missing_exps, key=lambda x:x[1]):
+        print("python3 run.py --algorithm %s --dataset %s --count %s" % (ds, algo, count))
+        print("""The following --definition argument has to be set to re-run experiments:
             - hamming, reproducibility/hamming_runs.yaml
             - nytimes, reproducibility/nytimes_runs.yaml
             - otherwise, reproducibility/standard_runs.yaml""")
