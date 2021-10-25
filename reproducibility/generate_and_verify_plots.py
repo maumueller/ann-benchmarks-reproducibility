@@ -50,12 +50,12 @@ if len(missing) > 0:
                 missing_exps.add((ds, algo, count))
 
     print("The following experiments have missing results:")
-    for ds, algo, count in sorted(missing_exps, key=lambda x:x[1]):
+    for ds, algo, count in sorted(missing_exps, key=lambda x:x[0]):
         print("python3 run.py --algorithm %s --dataset %s --count %s" % (ds, algo, count))
-        print("""The following --definition argument has to be set to re-run experiments:
-            - hamming, reproducibility/hamming_runs.yaml
-            - nytimes, reproducibility/nytimes_runs.yaml
-            - otherwise, reproducibility/standard_runs.yaml""")
+    print("""The following --definition argument has to be set to re-run experiments:
+        - hamming, reproducibility/hamming_runs.yaml
+        - nytimes, reproducibility/nytimes_runs.yaml
+        - otherwise, reproducibility/standard_runs.yaml""")
     print("The paper will be missing plots that are associated with these experiments.")
 
 
