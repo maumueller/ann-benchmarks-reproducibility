@@ -4,7 +4,7 @@ RUN apt-get update
 RUN apt-get install -y git cmake g++ python3 python3-setuptools python3-pip
 RUN pip3 install pip==20.3.4
 RUN pip3 install pybind11==2.2.4
-RUN git clone https://github.com/yahoojapan/ngt.git && cd ngt && git checkout 9acca3dd48914f96fa4a5e63f6d426661460f7cc
+RUN git clone https://github.com/yahoojapan/ngt.git && cd ngt && git checkout 3847c50d892da57f50dd7fa35f336517cc26f9f4 
 RUN mkdir -p ngt/build
 RUN cd ngt/build && cmake ..
 RUN cd ngt/build && make && make install
