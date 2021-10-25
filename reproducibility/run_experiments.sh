@@ -10,12 +10,15 @@ echo Started experiments at `date`
 
 mkdir -p logs
 
-for ds in glove-100-angular sift-128-euclidean random-10nn-euclidean nytimes-256-angular; do
+for ds in glove-100-angular sift-128-euclidean random-10nn-euclidean; do
     $PYTHON run.py --dataset $ds --definition $ALGODEF --runs 3 --count 10 --parallelism $PARALLEL
     cp annb.log logs/${ds}_10.log
 done
 
 $PYTHON run.py --dataset glove-100-angular --runs 1 --count 10 --algorithm bruteforce-blas --definition $ALGODEF --run-disabled
+
+$PYTHON run.py --dataset nytimes-256-angular --definition reproducibility/nytimes_runs.yaml --runs 3 --count 10 --parallelism $PARALLEL
+cp annb.log logs/nytimes-256-angular_10.log
 
 
 # K=100 runs
@@ -48,7 +51,7 @@ cp annb.log logs/sift-128-euclidean-batch_10.log
 end=`date +%m`
 echo Finished experiments at `date`
 
-echo Spend $((end- start))m reproducing the experiments.
+echo Spent $((end- start))m reproducing the experiments.
 
 
 
