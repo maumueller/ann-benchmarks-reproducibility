@@ -13,20 +13,21 @@ A summary of the different steps can be found in the bottom.
 
 ### Installation
 
+There are two different ways to install the framework. You can either set up a VM ready to carry out the experiments using Vagrant, or you install the framework on your existing (Linux) setup.
+
 #### Setting up a VM using Vagrant
 
 We provide a `Vagrantfile` in the [research artifacts](https://doi.org/10.5281/zenodo.4607761)  that automatically sets up a VM ready to carry out the experiments.
 See  <https://www.vagrantup.com/docs/installation> for how to install Vagrant using Virtualbox.
 
-Download the file and put it into a new directory. 
+Next, download `Vagrantfile` and put it into a new directory. 
 Edit `Vagrantfile` on line 51 and 52 to set up how many cpu cores and memory should be exposed to the VM.
 
-Next, carry out the following steps:
+Next, carry out the following steps in the directory where `Vagrantfile` resides.
 
 ```bash
 vagrant up # sets up the vm
 vagrant ssh  # connects to the machine
-sudo chown -R vagrant:vagrant ann-benchmarks-reproducibility
 cd ann-benchmarks-reproducibility
 ```
 
@@ -36,10 +37,32 @@ Note that this setup does not allow to reproduce the (few) GPU runs mentioned in
 
 If the reproducibility framework is run in an existing linux installation,
 we require that Python 3.6 or 3.8 and docker are installed. 
-An installation guide for Docker can be found at 
-<https://docs.docker.com/engine/install/ubuntu/>.
-To make sure that the user can spawn Docker containers, make sure to follow the guides at <https://docs.docker.com/engine/install/linux-postinstall/>.
-For Ubuntu installations, this means that the user has to carry out the following command ` sudo usermod -aG docker $USER` and log into the shell again.
+Starting from an Ubuntu 18.04 installation, the steps are as follows.
+
+First, install docker. The necessary steps to carry out the installation are:
+
+```bash
+$ sudo apt-get remove docker docker-engine docker.io containerd runc
+$ sudo apt-get update && sudo apt-get -y install apt-transport-https ca-certificates curl gnupg lsb-release
+$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+$ echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+$ sudo apt-get update
+$ sudo apt-get install docker-ce docker-ce-cli containerd.io
+$ sudo usermod -aG docker $USER
+```
+Afterwards, log out and back into your shell.
+
+If an nvidia-GPU is present and the nvidia driver is installed, nvidia-docker can be installed as follows:
+```bash
+$ distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
+   && curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add - \
+   && curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+$ sudo apt-get update
+$ sudo apt-get install -y nvidia-docker2
+$ sudo systemctl restart docker
+```
 
 For the Python installation, in an Ubuntu 18.04 setup, Python 3.6 can be installed as follows:
 
@@ -55,14 +78,12 @@ The `--proc` flag specifies that the installation should use five processes in p
 ```bash
 $ git clone https://github.com/maumueller/ann-benchmarks-reproducibility
 $ cd ann-benchmarks-reproducibility 
-$ pip3 install -r requirements_36.txt # use requirements_38.txt for Python 3.8
+$ pip3 install -r requirements_py36.txt # use requirements_py38.txt for Python 3.8
 $ python3 install.py --proc 5
 ```
 
-For more recent versions of Python, the files `requirements.txt` has to be updated to contain recent versions of libraries. 
-At the time of writing this article, the most recent choices for each library worked well for Python 3.9.
-At the end of running the installation script, the individual implementations will report on a successful or failed installation. 
-It is necessary that all installations succeeded before proceeding.
+For more recent versions of Python, the files `requirements_*.txt` has to be updated to contain recent versions of libraries. 
+We provide a non-fixed version under `requirements.txt`.
 
 Running CPU-based experiments
 ----------------------------
