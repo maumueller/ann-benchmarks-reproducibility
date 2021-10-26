@@ -17,8 +17,7 @@ class ONNG(BaseANN):
         self._metric = metrics[metric]
         self._object_type = object_type
         self._edge_size_for_search = -2
-        self._build_time_limit = 4
-        self._epsilon = 0.0
+        self._epsilon = 0.1
         print('ONNG: edge_size=' + str(self._edge_size))
         print('ONNG: outdegree=' + str(self._outdegree))
         print('ONNG: indegree=' + str(self._indegree))
@@ -41,10 +40,10 @@ class ONNG(BaseANN):
         if (not os.path.exists(index)) and (not os.path.exists(anngIndex)):
             print('ONNG: create ANNG')
             t = time.time()
-            args = ['ngt', 'create', '-it', '-p8', '-b500', '-ga', '-of', '-D' + self._metric, '-d' + str(dim), '-E' + str(self._edge_size), '-S0', '-e' + str(self._epsilon), '-P0', '-B30', '-T' + str(self._build_time_limit), anngIndex]
+            args = ['ngt', 'create', '-it', '-p8', '-b500', '-ga', '-of', '-D' + self._metric, '-d' + str(dim), '-E' + str(self._edge_size), '-S0', '-e' + str(self._epsilon), '-P0', '-B30', anngIndex]
             subprocess.call(args)
             idx = ngtpy.Index(path=anngIndex)
-            idx.batch_insert(X, num_threads=24, debug=False)
+            idx.batch_insert(X, num_threads=1, debug=False)
             idx.save()
             idx.close()
             print('ONNG: ANNG construction time(sec)=' + str(time.time() - t))
@@ -52,7 +51,7 @@ class ONNG(BaseANN):
             print('ONNG: degree adjustment')
             t = time.time()
             args = ['ngt', 'reconstruct-graph', '-mS', '-o ' + str(self._outdegree), '-i ' + str(self._indegree), anngIndex, index]
-            subprocess.call(args)
+            subprocess.check_call(args)
             print('ONNG: degree adjustment time(sec)=' + str(time.time() -t))
         if os.path.exists(index):
             print('ONNG: index already exists! ' + str(index))
