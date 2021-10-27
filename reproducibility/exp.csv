@@ -10,4 +10,4 @@ gist-960-euclidean, 10, false, 63
 gist-960-euclidean, 100, false, 63
 sift-256-hamming, 10, false, 35
 word2bits-800-hamming, 10, false, 35
-sift-128-euclidean, 10, false, 39
+sift-128-euclidean, 10, true, 39
