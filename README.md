@@ -92,8 +92,9 @@ After setting up the Vagrant VM or finishing the installation in the local envir
 
 Starting in the direction `ann-benchmarks-reproducibility`, we invoke all CPU-based experiments by running 
 ```bash
-$ PY=python3 PARALLELISM=10 bash reproducibility/run_experiments.sh 
+$ PY=python3 PARALLELISM=10 bash reproducibility/run_experiments.sh | tee -a runs.log
 ```
+and write a log file to `runs.log`.
 
 All individual runs of experiments in this part are carried out on a single CPU core using Docker. The environmental variable `PARALLELISM` can be used to spawn multiple containers in parallel. For a 10-core machine, we suggest using a value of 5.
 The environmental variable `PY` can be used to point to a custom Python installation, e.g., provided by Anaconda.
@@ -101,7 +102,7 @@ Note that for the largest dataset `GIST-960-Euclidean`, around 20GB of RAM are n
 The environmental variable `GISTPARALLELISM` controls the number of parallel instances run for the GIST dataset. Invoking 
 
 ```bash
-$ PY=python3 PARALLELISM=10 GISTPARALLELISM=3 bash reproducibility/run_experiments.sh 
+$ PY=python3 PARALLELISM=10 GISTPARALLELISM=3 bash reproducibility/run_experiments.sh | tee -a runs.log
 ```
 corresponds to 3 parallel runs on GIST, and 10 on all other datasets. 
 A machine used for running this experiment should contain at least 64GB of RAM.
@@ -113,7 +114,7 @@ Running GPU-based experiments
 The paper <https://arxiv.org/abs/1807.05614> contains a single run of a GPU-based variant in Figure 12. 
 This run was carried out in a local environment outside a docker container.
 To reproduce this run, we provide a script in `reproducibility/run_gpu.sh`. 
-A Linux-based environment with a CUDA runtime of at least 10.0 is necessary.
+A Linux-based environment with a CUDA runtime of at least 10.2 is necessary.
 This can be checked by inspecting the output of `nvidia-smi`.
 Furthermore, the `nvidia-runtime` for docker must be installed, as detailed in <https://github.com/NVIDIA/nvidia-docker>.
 If these requirements are met, the GPU run is reproduced by running:
