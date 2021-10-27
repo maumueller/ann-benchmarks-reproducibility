@@ -42,33 +42,33 @@ Starting from an Ubuntu 18.04 installation, the steps are as follows.
 First, install docker. The necessary steps to carry out the installation are:
 
 ```bash
-$ sudo apt-get remove docker docker-engine docker.io containerd runc
-$ sudo apt-get update && sudo apt-get -y install apt-transport-https ca-certificates curl gnupg lsb-release
-$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-$ echo \
+sudo apt-get remove docker docker-engine docker.io containerd runc
+sudo apt-get update && sudo apt-get -y install apt-transport-https ca-certificates curl gnupg lsb-release
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-$ sudo apt-get update
-$ sudo apt-get install docker-ce docker-ce-cli containerd.io
-$ sudo usermod -aG docker $USER
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io
+sudo usermod -aG docker $USER
 ```
 Afterwards, log out and back into your shell.
 
 If an nvidia-GPU is present and the nvidia driver is installed, nvidia-docker can be installed as follows:
 ```bash
-$ distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
+distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
    && curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add - \
    && curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
-$ sudo apt-get update
-$ sudo apt-get install -y nvidia-docker2
-$ sudo systemctl restart docker
+sudo apt-get update
+sudo apt-get install -y nvidia-docker2
+sudo systemctl restart docker
 ```
 
 For the Python installation, in an Ubuntu 18.04 setup, Python 3.6 can be installed as follows:
 
 ```bash
-$ sudo apt-get update 
-$ sudo apt-get install -y python3-pip build-essential git
+sudo apt-get update 
+sudo apt-get install -y python3-pip build-essential git
 ```
 
 Next, clone the repository and install necessary dependencies and compile 
@@ -76,10 +76,10 @@ and install the nearest neighbor search implementations.
 The `--proc` flag specifies that the installation should use five processes in parallel.
 
 ```bash
-$ git clone https://github.com/maumueller/ann-benchmarks-reproducibility
-$ cd ann-benchmarks-reproducibility 
-$ pip3 install -r requirements_py36.txt # use requirements_py38.txt for Python 3.8
-$ python3 install.py --proc 5
+git clone https://github.com/maumueller/ann-benchmarks-reproducibility
+cd ann-benchmarks-reproducibility 
+pip3 install -r requirements_py36.txt # use requirements_py38.txt for Python 3.8
+python3 install.py --proc 5
 ```
 
 For more recent versions of Python, the files `requirements_*.txt` has to be updated to contain recent versions of libraries. 
@@ -92,7 +92,7 @@ After setting up the Vagrant VM or finishing the installation in the local envir
 
 Starting in the direction `ann-benchmarks-reproducibility`, we invoke all CPU-based experiments by running 
 ```bash
-$ PY=python3 PARALLELISM=10 bash reproducibility/run_experiments.sh | tee -a runs.log
+PY=python3 PARALLELISM=10 bash reproducibility/run_experiments.sh | tee -a runs.log
 ```
 and write a log file to `runs.log`.
 
@@ -102,7 +102,7 @@ Note that for the largest dataset `GIST-960-Euclidean`, around 20GB of RAM are n
 The environmental variable `GISTPARALLELISM` controls the number of parallel instances run for the GIST dataset. Invoking 
 
 ```bash
-$ PY=python3 PARALLELISM=10 GISTPARALLELISM=3 bash reproducibility/run_experiments.sh | tee -a runs.log
+PY=python3 PARALLELISM=10 GISTPARALLELISM=3 bash reproducibility/run_experiments.sh | tee -a runs.log
 ```
 corresponds to 3 parallel runs on GIST, and 10 on all other datasets. 
 A machine used for running this experiment should contain at least 64GB of RAM.
@@ -120,8 +120,8 @@ Furthermore, the `nvidia-runtime` for docker must be installed, as detailed in <
 If these requirements are met, the GPU run is reproduced by running:
 
 ```bash
-$ python3 install.py --algorithm faissgpu 
-$ bash reproducibility/run_gpu.sh
+python3 install.py --algorithm faissgpu 
+bash reproducibility/run_gpu.sh
 ```
 
 Our machine was equipped with a Quadro M4000 with compute engine 5.2 and all runs were finished within 10 minutes.
@@ -135,10 +135,10 @@ If all runs above have been carried out, we can start reproducing the plots in t
 Run
 
 ```bash
-$ sudo python3 data_export --out res.csv
-$ mkdir -p paper/result_tables/
-$ python3 reproducibility/create_result_tables.py res.csv paper/result_tables/
-$ python3 reproducibility/generate_and_verify_plots.py
+sudo python3 data_export --out res.csv
+mkdir -p paper/result_tables/
+python3 reproducibility/create_result_tables.py res.csv paper/result_tables/
+python3 reproducibility/generate_and_verify_plots.py
 ```
 
 to create all the raw tables used by `pgfplots` during the final LateX compilation.
@@ -149,7 +149,7 @@ It will also list missing data points, e.g., because the computation timed out, 
 Now, compile the paper by changing to the `paper` directory and compiling `paper.tex`, i.e., 
 
 ```bash
-$ cd paper  && latexmk -pdf paper.tex
+cd paper  && latexmk -pdf paper.tex
 ```
 
 This requires a standard latex installation for scientific writing. 
@@ -157,8 +157,8 @@ If such a system is not present, we provide another Docker container in `paper`.
 The reproducibility steps are then 
 
 ```bash
-$ docker build . -t ann-benchmarks-reproducibility-latex 
-$ docker run -it -v "$(pwd)"/:/app/:rw ann-benchmarks-reproducibility-latex:latest
+docker build . -t ann-benchmarks-reproducibility-latex 
+docker run -it -v "$(pwd)"/:/app/:rw ann-benchmarks-reproducibility-latex:latest
 ```
 
 from within the `paper` directory.
