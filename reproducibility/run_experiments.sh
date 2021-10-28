@@ -1,11 +1,11 @@
-PYTHON=${PY:=python3}
+PYTHON=${PY:="python3 -u"}
 PARALLEL=${PARALLELISM:=1}
 GISTPARALLEL=${GISTPARALLELISM:=$PARALLEL}
 
 # K=10 runs
 ALGODEF=reproducibility/standard_runs.yaml
 
-start=`date +%m`
+start=`date +%s`
 echo Started experiments at `date`
 
 mkdir -p logs
@@ -48,10 +48,10 @@ ALGODEF=reproducibility/batch_runs.yaml
 $PYTHON run.py --dataset sift-128-euclidean --definition $ALGODEF --batch --count 10
 cp annb.log logs/sift-128-euclidean-batch_10.log
 
-end=`date +%m`
+end=`date +%s`
 echo Finished experiments at `date`
 
-echo Spent $((end- start))m reproducing the experiments.
+echo Spent $((end- start))s reproducing the experiments.
 
 
 
