@@ -92,7 +92,7 @@ After setting up the Vagrant VM or finishing the installation in the local envir
 
 Starting in the direction `ann-benchmarks-reproducibility`, we invoke all CPU-based experiments by running 
 ```bash
-PY=python3 PARALLELISM=10 bash reproducibility/run_experiments.sh | tee -a runs.log
+PY="python3 -u" PARALLELISM=10 bash reproducibility/run_experiments.sh | tee -a runs.log
 ```
 and write a log file to `runs.log`.
 
