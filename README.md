@@ -17,7 +17,7 @@ There are two different ways to install the framework. You can either set up a V
 
 #### Setting up a VM using Vagrant
 
-We provide a `Vagrantfile` in the [research artifacts](https://doi.org/10.5281/zenodo.4607761)  that automatically sets up a VM ready to carry out the experiments.
+We provide a `Vagrantfile` in the [research artifacts](https://doi.org/10.5281/zenodo.5613101)  that automatically sets up a VM ready to carry out the experiments.
 See  <https://www.vagrantup.com/docs/installation> for how to install Vagrant using Virtualbox.
 
 Next, download `Vagrantfile` and put it into a new directory. 
@@ -170,7 +170,7 @@ The final PDF can be seen in `paper/paper.pdf` and the plots can be compared to 
 Reproduction from the original raw results
 ==========================================
 
-To avoid rerunning all experiments, the raw result of the original runs can be accessed from the research artifacts <https://doi.org/10.5281/zenodo.4607761>.
+To avoid rerunning all experiments, the raw result of the original runs can be accessed from the research artifacts <https://doi.org/10.5281/zenodo.5613101>.
 It is required to complete the installation steps first.
 Unpack the results into the `ann-benchmarks` folder, and run
 the same steps as above. 
@@ -184,4 +184,4 @@ The following publication details design principles behind the benchmarking fram
 [ANN-Benchmarks: A Benchmarking Tool for Approximate Nearest Neighbor Algorithms](https://arxiv.org/abs/1807.05614). Information Systems 2019. DOI: [10.1016/j.is.2019.02.006](https://doi.org/10.1016/j.is.2019.02.006)
 - M. Aumüller, E. Bernhardsson, A. Faithfull:
 [Reproducibility Paper for ANN-Benchmarks: A Benchmarking Tool for Approximate Nearest Neighbor Algorithms](http://itu.dk/people/maau/additional/ann_benchmarks_reproducibility.pdf). 
-- Research artifacts:  <https://doi.org/10.5281/zenodo.4607761>
+- Research artifacts:  <https://doi.org/10.5281/zenodo.5613101>
