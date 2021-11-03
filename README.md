@@ -175,6 +175,12 @@ It is required to complete the installation steps first.
 Unpack the results into the `ann-benchmarks` folder, and run
 the same steps as above. 
 
+Additional Evaluation
+=====================
+
+[A notebook](eval.ipynb) is available containing ideas for additional evaluation of the differences between experimental runs.
+
+
 Related Publications
 ==================
 
